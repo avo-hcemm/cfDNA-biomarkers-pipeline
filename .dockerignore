@@ -1,0 +1,12 @@
+wdr/sequencing/genome_hg38/
+wdr/mappedNCBI_H_filtered/
+wdr/sequencing/untrimm/
+wdr/sequencing/samples/
+wdr/sequencing/bash_scripts/
+wdr/samples/
+wdr/src/
+wdr/bash_scripts/
+*.sam
+*.bam
+*.bt2
+

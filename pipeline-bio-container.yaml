@@ -1,0 +1,70 @@
+---
+tool: biomarkersearch-pipeline
+version: "1.0.0"
+description: >
+  This container provides a bioinformatics pipeline to identify biomarkers from sequencing data derived from human plasma samples. 
+  The biomarkers can be used in downstream clinical applications such as PCR-based screening and diagnostic tests.
+
+  The pipeline performs preprocessing, quality filtering, alignment, and statistical analysis of DNA sequencing data. 
+  It outputs genomic regions (~200 bp) that are significantly enriched in case vs control groups — serving as candidate biomarkers.
+
+license: MIT
+authors:
+  - name:  Alessandra Vittorini Orgeas
+    email: alessandra.vittorini@hcemm.eu
+homepage: https://github.com/avo-hcemm/cfDNA-Biomarkers
+container:
+  type: docker
+  image: avohcemm/biomarkersearch-pipeline:complete_v1.0.0
+  cmd: ["bash", "/app/run_pipeline.sh"]
+  args: []
+  platform: linux/amd64
+requirements:
+  - openjdk=21
+  - fastqc
+  - trimmomatic
+  - bowtie2
+  - samtools
+  - picard
+tags:
+  - biomarker
+  - sequencing
+  - dna
+  - pipeline
+  - clinical
+  - pcr
+  - bioinformatics
+
+  inputs:
+  - format: fastq
+    description: >
+      Paired-end FASTQ or FASTQ.GZ files containing sequencing reads from plasma samples. 
+      Must be organized per sample and match entries in the sample annotation file.
+
+  - format: fasta
+    description: >
+      Adapter sequence file in FASTA format, used for trimming sequencing adapters.
+
+  - format: csv
+    description: >
+      Sample annotation file (e.g., datainfo.csv) listing sample IDs, case/control labels, 
+      and paths to paired-end FASTQ files.
+
+ - format: csv
+  description: >
+    Genome annotation file (e.g., genomeinfo.csv). Each row specifies a chromosome name and the full path to its corresponding FASTA file.
+
+  - format: csv
+    description: >
+      Pipeline parameters file (e.g., rparams.csv) specifying thresholds and settings 
+      used during the statistical analysis.
+
+  - format: csv
+    description: List of biomarker sequences with genomic coordinates (~200bp)
+
+tools:
+  - id: biomarkersearch-pipeline
+    description: Biomarker identification pipeline for sequencing data from human plasma
+    homepage: https://github.com/avo-hcemm/biomarkersearch-pipeline
+    documentation: https://github.com/avo-hcemm/biomarkersearch-pipeline#readme
+    license: MIT
