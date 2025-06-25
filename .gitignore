@@ -1,2 +1,8 @@
+# OS geenrated files
+.DS_Store
+
+# files
+*.r
+
 # folders
 wdr
