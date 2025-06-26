@@ -3,6 +3,7 @@
 
 # files
 *.r
+*.jar
 
 # folders
 wdr

@@ -32,13 +32,10 @@ docker build -f dockerfiles/Dockerfile_pipeline -t avohcemm/biomarkersearch-pipe
 
 ```bash
   docker run -it --rm \
-  -v /path/to/bash_scripts:/app/sequencing/bash_scripts \
-  -v /path/to/sequencing_adapter:/app/sequencing/adapter \
-  -v /path/to/sequencing_untrimm:/app/sequencing/untrimm \
-  -v /path/to/sequencing_genome_hg38:/app/sequencing/genome_hg38 \
-  -v /path/to/input_folder:/app/input/human \
-  -v /path/to/samples:/app/samples \
-  -v /path/to/genome:/app/src/genome \
+   --platform linux/amd64 \
+  -v /mnt/biomarkers-pipeline/jcna-kldiv_11.5.jar:/app/jcna-kldiv_11.5.jar \
+  -v /mnt/biomarkers-pipeline/run_pipeline.sh:/app/run_pipeline.sh \
+  -v /mnt/biomarkers-pipeline/wdr:/app/ \
   my-pipeline:latest \
   <directory-raw-data>
   <subdirectory-preprocessing> \
