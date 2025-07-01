@@ -1,18 +1,24 @@
 #!/bin/bash
 
+# Validation
+if [[ "$#" -lt 6 || "$#" -gt 7 ]]; then
+  echo "Usage: $0 <PATHTODATA> <DATA_SUBDIR> <PATHTOADAPTERFILE> <GENOMEINFO.csv> <PARAMETERS.csv> [DATAINFO.csv] <SPECIES>"
+  exit 1
+fi
+
 # Arguments
 PATHTODATA=$1
 DATA_SUBDIR=$2
 ADAPTERFILE=$3
 GENOMEINFO=$4
-DATAINFO=$5
-PARAMETERS=$6
-SPECIES=$7
+PARAMETERS=$5
 
-# Validation
-if [[ $# -ne 7 ]]; then
-  echo "Usage: $0 <PATHTODATA> <DATA_SUBDIR> <ADAPTERFILE> <GENOMEINFO.csv> <DATAINFO.csv> <PARAMETERS.csv> <SPECIES>"
-  exit 1
+if [[ "$#" -eq 7 ]]; then
+  DATAINFO=$6
+  SPECIES=$7
+else
+  DATAINFO=""
+  SPECIES=$6
 fi
 
 # Default max heap size if not provided
@@ -25,18 +31,27 @@ echo "Running preprocessing script..."
 echo "Input: $PATHTODATA $DATA_SUBDIR $ADAPTERFILE"
 echo "========================================"
 
-bash /app/sequencing/bash_scripts/reads_prep_NCBI_H_filtered_max600_test.sh \
+bash /app/sequencing/bash_scripts/reads_preprocessing.sh \
 "$PATHTODATA" \
 "$DATA_SUBDIR" \
 "$ADAPTERFILE"
 
 echo "========================================"
 echo "Running Java analysis..."
-echo "Input: $GENOMEINFO $DATAINFO $PARAMETERS ($SPECIES)"
+echo "Input: $GENOMEINFO $PARAMETERS [$DATAINFO] $SPECIES"
 echo "========================================"
 
-java -jar -Xmx"$HEAP_SIZE" /app/jcna-kldiv_11.4.jar \
+if [[ "$#" -eq 7 ]]; then
+  java -jar -Xmx"$HEAP_SIZE" /app/jcna-kldiv_13.jar \
     "$GENOMEINFO" \
+    "$PARAMETERS" \
     "$DATAINFO" \
+    "$SPECIES"
+else
+  java -jar -Xmx"$HEAP_SIZE" /app/jcna-kldiv_13.jar \
+    "$GENOMEINFO" \
     "$PARAMETERS" \
     "$SPECIES"
+fi
+
+
