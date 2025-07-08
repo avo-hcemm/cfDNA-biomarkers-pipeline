@@ -27,9 +27,9 @@ echo "Processing chromosome $CHROM on node $HOSTNAME, SLURM_ARRAY_TASK_ID=$SLURM
 # Run with dynamic input based on index
 java -Xmx230g -Dlog4j.configurationFile=src/config/log4j2.xml \
 -jar /home/avo/jars/jcna-kldiv_14.jar \
-$CHROM \
 "$GENOME_CSV" \
 "$PARAMS_CSV" \
 "$DATA_CSV" \
-human
+human \
+--chromosome $CHROM
 

@@ -2,37 +2,36 @@
 
 set -e  # Stop on first error
 
-# Check for -s flag
+# Default values
 SKIP_PREPROCESSING=false
-for arg in "$@"; do
-  if [[ "$arg" == "-s" ]]; then
-    SKIP_PREPROCESSING=true
-    break
-  fi
-done
-
-# Check for -chromosome flag
 CHROMOSOME_JOB=false
-for arg in "$@"; do
-  if [[ "$arg" == "-chromosome" ]]; then
-    CHROMOSOME_JOB=true
-    break
-  fi
-done
+CHR=""
 
-# Remove the flag from the arguments array for easier parsing
+# Parse flags and remove them from arguments
 ARGS=()
-for arg in "$@"; do
-  if [[ "$arg" != "-s" ]]; then
-    ARGS+=("$arg")
-  fi
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -s)
+      SKIP_PREPROCESSING=true
+      shift
+      ;;
+    --chromosome)
+      CHROMOSOME_JOB=true
+      CHR="$2"
+      shift 2
+      ;;
+    *)
+      ARGS+=("$1")
+      shift
+      ;;
+  esac
 done
 
-# Validation
-if [[ "$SKIP_PREPROCESSING" == "true" && "${#ARGS[@]}" -lt 5 ]]; then
+# Validation of args length depending on mode
+if [[ "$SKIP_PREPROCESSING" == "true" && "${#ARGS[@]}" -lt 4 ]]; then
   echo "Usage (skipping preprocessing): $0 <GENOMEINFO.csv> <PARAMETERS.csv> <DATAINFO.csv> <SPECIES> -s --chromosome [CHR]"
   exit 1
-elif [[ "$SKIP_PREPROCESSING" == "false" && ("${#ARGS[@]}" -lt 7 || "${#ARGS[@]}" -gt 10 ) ]]; then
+elif [[ "$SKIP_PREPROCESSING" == "false" && ("${#ARGS[@]}" -lt 7 || "${#ARGS[@]}" -gt 8) ]]; then
   echo "Usage (with preprocessing): $0 <PATHTODATA> <DATA_SUBDIR> <ADAPTERFILE> <GENOMEINDEX> <GENOMEINFO.csv> <PARAMETERS.csv> [DATAINFO.csv] <SPECIES> [-s] --chromosome [CHR]"
   exit 1
 fi
@@ -43,7 +42,6 @@ if [[ "$SKIP_PREPROCESSING" == "true" ]]; then
   PARAMETERS=${ARGS[1]}
   DATAINFO=${ARGS[2]}
   SPECIES=${ARGS[3]}
-  CHR=${ARGS[5]} 
 else
   PATHTODATA=${ARGS[0]}
   DATA_SUBDIR=${ARGS[1]}
@@ -51,19 +49,13 @@ else
   GENOMEINDEX=${ARGS[3]}
   GENOMEINFO=${ARGS[4]}
   PARAMETERS=${ARGS[5]}
-  if [[ "${#ARGS[@]}" -eq 10 ]]; then
+  if [[ "${#ARGS[@]}" -eq 8 ]]; then
     DATAINFO=${ARGS[6]}
     SPECIES=${ARGS[7]}
-    CHR=${ARGS[9]}
-  else if [[ "${#ARGS[@]}" -eq 9 ]]; then
+  else
     DATAINFO=""
     SPECIES=${ARGS[6]}
-    CHR=${ARGS[8]}
-  else if [[ "${#ARGS[@]}" -eq 7 ]]; then
-    DATAINFO=""
-    SPECIES=${ARGS[6]}
-    CHR=""
- fi
+  fi
 fi
 
 # Default max heap size if not provided
@@ -90,12 +82,7 @@ else
   echo "========================================"
 fi
 
-# Run Java analysis
-echo "========================================================================="
-echo "Running Java analysis..."
-echo "Input: $GENOMEINFO $PARAMETERS [$DATAINFO] $SPECIES" --chromosome [$CHR]
-echo "========================================================================="
-
+# Copy input files
 GENOMEINFOFILE=$(basename "$GENOMEINFO")
 PARAMETERSFILE=$(basename "$PARAMETERS")
 cp "$GENOMEINFO" "/jcna/input/$GENOMEINFOFILE"
@@ -105,14 +92,14 @@ if [[ -n "$DATAINFO" && -f "$DATAINFO" ]]; then
   DATAFILE=$(basename "$DATAINFO")
   cp "$DATAINFO" "/jcna/input/$DATAFILE"
 fi
-  
+
 echo "Files in input folder:"
 ls /jcna/input/
 
-
-if [[ -n "$DATAINFO" && -n "$DATAFILE" && "$CHROMOSOME_JOB" == "true"]]; then
+# Run Java analysis with or without chromosome and DATAINFO
+if [[ -n "$DATAINFO" && -n "$DATAFILE" && "$CHROMOSOME_JOB" == "true" ]]; then
   java -jar -Xmx"$HEAP_SIZE" -Dlog4j.configurationFile=src/config/log4j2.xml \
-    /home/avo/jars/jcna-kldiv_14.jar \
+    /home/avo/jars/jcna-kldiv_15.jar \
     "/jcna/input/$GENOMEINFOFILE" \
     "/jcna/input/$PARAMETERSFILE" \
     "/jcna/input/$DATAFILE" \
@@ -120,16 +107,15 @@ if [[ -n "$DATAINFO" && -n "$DATAFILE" && "$CHROMOSOME_JOB" == "true"]]; then
     --chromosome "$CHR"
 elif [[ "$CHROMOSOME_JOB" == "true" ]]; then
   java -jar -Xmx"$HEAP_SIZE" -Dlog4j.configurationFile=src/config/log4j2.xml \
-    /home/avo/jars/jcna-kldiv_14.jar \
+    /home/avo/jars/jcna-kldiv_15.jar \
     "/jcna/input/$GENOMEINFOFILE" \
     "/jcna/input/$PARAMETERSFILE" \
     "$SPECIES" \
     --chromosome "$CHR"
-  else
-    java -jar -Xmx"$HEAP_SIZE" -Dlog4j.configurationFile=src/config/log4j2.xml \
-    /home/avo/jars/jcna-kldiv_14.jar \
+else
+  java -jar -Xmx"$HEAP_SIZE" -Dlog4j.configurationFile=src/config/log4j2.xml \
+    /home/avo/jars/jcna-kldiv_15.jar \
     "/jcna/input/$GENOMEINFOFILE" \
     "/jcna/input/$PARAMETERSFILE" \
     "$SPECIES"
-
 fi
