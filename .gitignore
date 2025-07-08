@@ -4,6 +4,8 @@
 # files
 *.r
 *.jar
+*.html
+*.json
 
 # folders
 wdr
