@@ -1,0 +1,48 @@
+<tool id="jcna_kldiv_pipeline" name="JCNA KLDIV Pipeline" version="1.0.1">
+  <description>Run JCNA KLDIV biomarker discovery pipeline on a specific chromosome</description>
+
+  <requirements>
+    <conda_env>pipeline_env_full.yml</conda_env>
+  </requirements>
+
+
+  <command><![CDATA[
+    mkdir -p output && \
+    JAVA_HEAP=230g bash scripts/run_pipeline.sh \
+  "$workdir" \
+  "$testsubdir" \
+  "$adapterfile" \
+  "$genomeindex" \
+  "$genome_csv" \
+  "$params_csv" \
+  "$species" \
+  --chromosome "$chromosome" \
+  -s 
+
+   # Collect all pipeline-generated folders/files into output_dir for Galaxy to pick up
+  mkdir -p output_dir
+  mv * output_dir/ || true  # move everything (folders+files) created by pipeline into output_dir
+  ]]></command>
+
+  <inputs>
+    <param name="workdir" type="text" label="Work Directory Path" />
+    <param name="testsubdir" type="text" label="Test Subdirectory" />
+    <param name="adapterfile" type="data" format="fasta" label="Adapter File" />
+    <param name="genomeindex" type="data" format="txt" label="Genome Index File" />
+    <param name="genome_csv" type="data" format="csv" label="Genome CSV File" />
+    <param name="params_csv" type="data" format="csv" label="Parameters CSV File" />
+    <param name="species" type="text" label="Species" />
+    <param name="chromosome" type="text" label="Chromosome Name" help="Provide a single chromosome name like chr1, chr2, etc." />
+  </inputs>
+
+  <outputs>
+    <collection name="output_dir" type="list" label="Per-chromosome output">
+      <discover_datasets pattern=".*" directory="output_dir" />
+    </collection>
+  </outputs>
+
+  <help>
+    This Galaxy tool wraps the JCNA KLDIV biomarker discovery pipeline, running per chromosome. 
+    You can use it with a Galaxy collection of chromosome names to parallelize execution.
+  </help>
+</tool>
