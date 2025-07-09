@@ -1,0 +1,48 @@
+<tool id="jcna_pipeline" name="JCNA Pipeline" version="1.0.1">
+  <description>Submit full JCNA sequencing pipeline with SLURM job dependencies</description>
+
+  <requirements>
+    <container type="docker">yourdockerimage/jcna_pipeline:latest</container>
+  </requirements>
+
+  <inputs>
+    <text name="inputdir" label="Input Directory" value="/scratch/csensen"/>
+    <text name="workdir" label="Work Directory" value="/scratch/csensen/Genomics/sequencing/newtest"/>
+    <text name="testsubdir" label="Test Subdirectory" value="testAll0709"/>
+    <data name="adapterfile" label="Adapter File (FASTA)" format="fasta"/>
+    <data name="genomeindexfile" label="Genome Index File" format="txt"/>
+    <data name="genomecsv" label="Genome CSV" format="csv"/>
+    <data name="paramscsv" label="Parameters CSV" format="csv"/>
+    <data name="datacsv" label="Data CSV" format="csv"/>
+    <text name="species" label="Species" value="human"/>
+    <text name="outputdir" label="Output Directory" value="/scratch/csensen/jcna_test/"/>
+  </inputs>
+
+  <command>
+    <![CDATA[
+    bash $__tool_directory__/submit_full_pipeline.sh \
+      "$inputdir" \
+      "$workdir" \
+      "$testsubdir" \
+      "$adapterfile" \
+      "$genomeindexfile" \
+      "$genomecsv" \
+      "$paramscsv" \
+      "$datacsv" \
+      "$species" \
+      "$outputdir"
+    ]]>
+  </command>
+
+  <outputs>
+    <!-- Outputs could be symbolic; if dynamic outputs are produced, Galaxy can capture them as collections -->
+  </outputs>
+
+  <help>
+    This tool submits a two-step SLURM pipeline:
+    1. `run_pipeline_module1.sh`
+    2. SLURM array job `run_pipeline_module2to6.sh` (one per chromosome)
+
+    All parameters must point to valid files and directories available to the SLURM environment.
+  </help>
+</tool>
