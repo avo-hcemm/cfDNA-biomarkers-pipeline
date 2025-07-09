@@ -1,0 +1,21 @@
+<tool id="uppercase" name="Uppercase Converter" version="1.0.0">
+    <description>Convert text to uppercase</description>
+    <command>
+        python '$__tool_directory__/uppercase.py' '$input' '$output'
+    </command>
+    <inputs>
+        <param name="input" type="data" format="txt" label="Input text file"/>
+    </inputs>
+    <outputs>
+        <data name="output" format="txt" label="Uppercased output"/>
+    </outputs>
+    <tests>
+    <test>
+        <param name="input" value="input.txt"/>
+        <output name="output" file="expected_output.txt"/>
+    </test>
+   </tests>
+    <help>
+        This tool converts all text in the input file to uppercase.
+    </help>
+</tool>

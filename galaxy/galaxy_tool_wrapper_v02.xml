@@ -1,0 +1,59 @@
+<tool id="jcna_pipeline" name="JCNA Pipeline" version="1.0.0">
+  <description>Run the JCNA sequencing pipeline on a specific chromosome</description>
+
+  <requirements>
+   <conda_env>pipeline_env_full.yml</conda_env>
+  </requirements>
+
+  <inputs>
+    <text name="workdir" label="Work directory" optional="true" value="/scratch/csensen/Genomics/sequencing/newtest"/>
+    <text name="testsubdir" label="Test subdirectory" optional="true" value="testAll0709"/>
+    <data name="adapterfile" label="Adapter file (FASTA)" format="fasta"/>
+    <data name="genomeindexfile" label="Genome index file" format="txt"/>
+    <data name="genomecsv" label="Genome CSV" format="csv"/>
+    <data name="paramscsv" label="Parameters CSV" format="csv"/>
+    <text name="species" label="Species" value="human"/>
+    <text name="chromosome" label="Chromosome to process" help="Chromosome name, e.g. chr1"/>
+  </inputs>
+
+  <outputs>
+    <data name="output_dir" format="directory" label="Pipeline output directory"/>
+  </outputs>
+
+  <command>
+    <![CDATA[
+    mkdir -p $output_dir
+    bash scripts/run_pipeline_v03.sh \
+      "$workdir" \
+      "$testsubdir" \
+      "$adapterfile" \
+      "$genomeindexfile" \
+      "$genomecsv" \
+      "$paramscsv" \
+      "$species" \
+      --chromosome "$chromosome" \
+      -o "$output_dir"
+    ]]>
+  </command>
+
+  <help>
+    Run the JCNA pipeline on the selected chromosome.
+  </help>
+
+  <stdio>
+    output/pipeline_test0709_${chromosome}.out
+  </stdio>
+
+  <tests>
+    <!-- You can add test cases here -->
+  </tests>
+
+  <requirements>
+    <container type="docker">yourdockerimage/jcna_pipeline:latest</container>
+  </requirements>
+
+  <resources>
+    <memory>250000000000</memory> <!-- ~250GB in bytes -->
+    <cores>50</cores>
+  </resources>
+</tool>
