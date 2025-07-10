@@ -6,11 +6,11 @@
   </requirements>
 
   <inputs>
-    <text name="inputdir" label="Input Directory" value="/scratch/csensen"/>
+    <text name="inputdir" label="Input Directory" value="/scratch/csensen/avo-home-backup"/>
     <text name="workdir" label="Work Directory" value="/scratch/csensen/Genomics/sequencing/newtest"/>
-    <text name="testsubdir" label="Test Subdirectory" value="testAll0709"/>
+    <text name="testsubdir" label="Test Subdirectory" value="test0710"/>
     <data name="adapterfile" label="Adapter File (FASTA)" format="fasta"/>
-    <data name="genomeindexfile" label="Genome Index File" format="txt"/>
+    <text name="genomeindex" label="Genome Index" format="txt" value="hg38_filtered_index"/>
     <data name="genomecsv" label="Genome CSV" format="csv"/>
     <data name="paramscsv" label="Parameters CSV" format="csv"/>
     <data name="datacsv" label="Data CSV" format="csv"/>
@@ -20,12 +20,12 @@
 
   <command>
     <![CDATA[
-    bash $__tool_directory__/submit_full_pipeline.sh \
+    bash $__tool_directory__/submit_pipeline.sh \
       "$inputdir" \
       "$workdir" \
       "$testsubdir" \
       "$adapterfile" \
-      "$genomeindexfile" \
+      "$genomeindex" \
       "$genomecsv" \
       "$paramscsv" \
       "$datacsv" \
@@ -35,8 +35,12 @@
   </command>
 
   <outputs>
-    <!-- Outputs could be symbolic; if dynamic outputs are produced, Galaxy can capture them as collections -->
+    <collection name="pipeline_output" type="list">
+      <discover_datasets pattern="(?P<name>.+)\.csv" directory="${outputdir}" recursive="true" format="csv"/>
+    </collection>
   </outputs>
+
+
 
   <help>
     This tool submits a two-step SLURM pipeline:

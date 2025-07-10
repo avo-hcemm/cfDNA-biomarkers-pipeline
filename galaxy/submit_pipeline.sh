@@ -12,7 +12,7 @@ INPUTDIR="$1"
 WORKDIR="$2"
 TESTSUBDIR="$3"
 ADAPTERFILE="$4"
-GENOMEINDEXFILE="$5"
+GENOMEINDEX="$5"
 GENOMECSV="$6"
 PARAMSCSV="$7"
 DATACSV="$8"
@@ -36,12 +36,20 @@ check_dir() {
     exit 1
   fi
 }
+## Helper function to check genome index files based on prefix
+check_genome_index() {
+  local index_prefix="$1"
+
+  if ! compgen -G "${index_prefix}*" > /dev/null; then
+    echo "ERROR: No genome index files found matching prefix '${index_prefix}*'"
+    exit 1
+  fi
+}
 
 echo "🔍 Validating input paths..."
 
 ## Check required files
 check_file "$ADAPTERFILE"
-check_file "$GENOMEINDEXFILE"
 check_file "$GENOMECSV"
 check_file "$PARAMSCSV"
 check_file "$DATACSV"
@@ -51,9 +59,12 @@ check_dir "$INPUTDIR"
 check_dir "$WORKDIR"
 
 ## Create output and working subdirectories if missing
-mkdir -P "$INPUT/output"
+mkdir -p "$INPUTDIR/output"
 mkdir -p "${WORKDIR}/${TESTSUBDIR}"
 mkdir -p "$OUTPUTDIR"
+
+## Check genome index files
+check_genome_index "$GENOMEINDEX"
 
 echo "✅ All files and directories are in place."
 
@@ -78,7 +89,7 @@ bash scripts/run_pipeline_module1.sh \
   "$WORKDIR" \
   "$TESTSUBDIR" \
   "$ADAPTERFILE" \
-  "$GENOMEINDEXFILE" \
+  "$GENOMEINDEX" \
   "$OUTPUTDIR"
 EOF
 )
@@ -101,7 +112,7 @@ set -euo pipefail
 source /opt/ohpc/pub/apps/spack/local/linux-almalinux9-zen3/gcc-11.5.0/miniconda3-24.7.1-fvzfyn26hdff63epca4yew2mktztjtjd/etc/profile.d/conda.sh
 conda activate myenv2
 
-NUM_CHROMS=\$((\$(wc -l < "$GENOMECSV") - 1))
+NUM_CHROMS=\$(wc -l < "$GENOMECSV")
 if [ "\$SLURM_ARRAY_TASK_ID" -ge "\$NUM_CHROMS" ]; then
   echo "No chromosome assigned to task ID \$SLURM_ARRAY_TASK_ID. Exiting."
   exit 0
