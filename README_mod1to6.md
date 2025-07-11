@@ -34,7 +34,7 @@ The pipeline performs preprocessing, quality filtering, alignment, and statistic
 ### 🔧 Build the Full Pipeline Container
 
 ```bash
-docker build -f dockerfiles/Dockerfile_mod1to6 -t avohcemm/biomarkersearch-mod1to6:complete_v1.0.0 .
+docker build -f dockerfiles/Dockerfile_mod1to6 -t avohcemm/biomarkersearch-mod1to6:v1.0.0 .
 ```
 
 ---
@@ -65,7 +65,7 @@ docker run -it --rm \
   --platform linux/amd64 \
   -v /full/path/to/rawdata:/app/sequencing \
   -v /full/path/to/workingdirectory:/app/wdr \
-  my-pipeline:latest \
+  avohcemm/biomarkersearch-mod1to6:v1.0.0 \
   /app/run_pipeline_module1.sh \
   <WORKDIR> \
   <TESTSUBDIR> \
@@ -100,7 +100,7 @@ docker run -it --rm \
   --platform linux/amd64 \
   -v /full/path/to/javainputdir:/app/javainputdir \
   -v /full/path/to/output:/app/cfdna-biomarkers \
-  my-pipeline:latest \
+  avohcemm/biomarkersearch-mod1to6:v1.0.0 \
   <GENOME_CSV> \
   <PARAMS_CSV> \
   <DATA_CSV> \
