@@ -45,3 +45,8 @@ docker build -f dockerfiles/Dockerfile_pipeline -t avohcemm/biomarkersearch-pipe
   <path-to-parameters.csv> \
   <species>
 ```
+---
+
+## 📄 Running Modules Separately
+
+To run or submit the pipeline modules independently (e.g., in separate jobs), refer to [README_mod1to6.md](README_mod1to6.md) for detailed instructions.

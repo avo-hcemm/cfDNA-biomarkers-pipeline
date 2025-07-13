@@ -27,8 +27,16 @@ The pipeline performs preprocessing, quality filtering, alignment, and statistic
 - Integrates Java and key bioinformatics tools  
 - Compatible with Docker and Singularity
 
----
+## 🐳 Docker Image
 
+The Docker image for this pipeline is available on [Docker Hub](https://hub.docker.com/r/avohcemm/biomarkersearch-mod1to6).
+
+You can pull it using:
+
+```bash
+docker pull avohcemm/biomarkersearch-mod1to6:v1.0.0
+```
+---
 ## 🚀 Usage
 
 ### 🔧 Build the Full Pipeline Container
@@ -36,7 +44,6 @@ The pipeline performs preprocessing, quality filtering, alignment, and statistic
 ```bash
 docker build -f dockerfiles/Dockerfile_mod1to6 -t avohcemm/biomarkersearch-mod1to6:v1.0.0 .
 ```
-
 ---
 
 ### 🧼 Module 1 – Read Preprocessing & Alignment

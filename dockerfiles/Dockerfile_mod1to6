@@ -1,22 +1,17 @@
 FROM ubuntu:latest
 
-ENV OS_TYPE=linux-64
-ARG MICROMAMBA_VERSION=1.4.4
+ENV OS_TYPE=linux-64    
 
 WORKDIR /app
-COPY wdr/ /app/
+COPY python /app/python
+COPY scripts/run_pipeline_module1.sh /app/
+COPY scripts/run_pipeline_module2to6.sh /app/
 
 # Install system dependencies
 RUN apt-get update -y && apt-get install -y --no-install-recommends \
-    bzip2 \
-    curl \
     wget \
     ca-certificates \
-    x11-apps \
-    xauth \
-    xserver-xorg-video-dummy \
     vim \
-    unzip \
     openjdk-21-jdk && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -29,13 +24,15 @@ ENV PATH=/opt/conda/bin:$PATH
 
 # Create environment with bio packages
 RUN conda install -y -c bioconda -c conda-forge \
-    fastqc trimmomatic bowtie2 samtools picard && \
-    conda clean -afy
+    fastqc trimmomatic bowtie2 samtools &&\
+    conda clean -afy && \
+    rm -rf ~/.conda
 
-#ENV CONDA_PREFIX=/opt/conda/envs/base
 ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64/
-#ENV PATH=${CONDA_PREFIX}/bin:${JAVA_HOME}/bin:${PATH}
 ENV PATH=$JAVA_HOME/bin:$PATH
 
-ENTRYPOINT ["bash", "/app/sequencing/bash_scripts/reads_prep_NCBI_H_filtered_max600_test.sh"]
+# Make both scripts executable
+RUN chmod +x /app/run_pipeline_module1.sh /app/run_pipeline_module2to6.sh
 
+# Default entry point to bash for flexibility
+ENTRYPOINT ["bash"]
