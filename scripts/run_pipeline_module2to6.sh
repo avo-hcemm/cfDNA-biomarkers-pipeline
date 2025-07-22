@@ -72,7 +72,7 @@ echo "Now in: $PWD"
 
 # Auxiliary parameters to run the jar file
 HEAP_SIZE=${JAVA_HEAP:-32g}
-JAR_PATH=${JAR_PATH:-"$INPUTDIR"/jars/jcna-kldiv_15.2.jar}
+JAR_PATH=${JAR_PATH:-"$INPUTDIR"/jars/jcna-kldiv_16.jar}
 LOGFILE_PATH="$INPUTDIR"/config/log4j2.xml
 echo "Java command: java -Xmx$HEAP_SIZE -Dlog4j.configurationFile=$LOGFILE_PATH -jar $JAR_PATH ..."
 
