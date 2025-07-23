@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tool id="pipeline_module2to6" name="Run Pipeline Modules 2–6" version="1.0.1">
+  <description>Run biomarker discovery (modules 2–6) per chromosome</description>
+
+  <command><![CDATA[
+    bash run_pipeline_module2to6.sh \
+      '$genomeinfo' \
+      '$parametersinfo' \
+      $if data_info:"'$data_info'" \
+      '$species' \
+      --chromosome '$chromosome' \
+      -i '$inputdir' -o '$outputdir'
+  ]]></command>
+
+  <inputs>
+    <param name="genomeinfo" type="data" format="csv" label="Genome Info CSV" />
+    <param name="parametersinfo" type="data" format="csv" label="Parameters Info CSV" />
+    <param name="data_info" type="data" format="csv" optional="true" label="Data Info CSV (optional)" />
+    <param name="species" type="text" label="Species" />
+    <param name="chromosome" type="text" label="Chromosome" />
+    <param name="inputdir" type="text" label="Input Directory (with jars/config)" />
+    <param name="outputdir" type="text" label="Output Directory (created if not exists)" />
+  </inputs>
+
+  <outputs>
+  <collection name="kl_results" type="list" label="KL divergence results">
+    <discover_datasets pattern="(?P<name>.+)\..+" format="tabular" directory="$outputdir/KL_output" recurse="true"/>
+  </collection>
+  <collection name="cna_results" type="list" label="CNA composition results">
+    <discover_datasets pattern="(?P<name>.+)\..+" format="tabular" directory="$outputdir/CNA_compositions" recurse="true"/>
+  </collection>
+</outputs>
+
+
+  <help><![CDATA[
+This tool runs **Modules 2–6** of the biomarker discovery pipeline.
+
+### Parallel mode
+If used with a dataset collection of chromosome names, Galaxy will run one job per chromosome.
+
+### Inputs
+- **Genome Info CSV**: Genome configuration.
+- **Parameters Info CSV**: Pipeline parameters.
+- **Data Info CSV** (optional): Sample metadata.
+- **Species**: Target species.
+- **Chromosome**: Chromosome to process (provided automatically if using a collection).
+- **Input Directory**: Location of the JAR and config files.
+- **Output Directory**: Destination for results.
+
+### Outputs
+- **Result collection**: All result files discovered recursively in `$outputdir`.
+  ]]></help>
+</tool>

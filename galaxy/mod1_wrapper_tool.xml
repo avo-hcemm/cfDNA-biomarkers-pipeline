@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tool id="pipeline_module1" name="Run Pipeline Module 1" version="1.1.0">
+  <description>Run preprocessing pipeline module 1 (paired-end reads → BAM files)</description>
+
+<command><![CDATA[
+  bash run_pipeline_module1.sh '$pathtodata' '$datasubdir' '$adapterfile' '$genomeindex' -i '$inputdir' -o '$outputdir'
+  bash generate_bam_list.sh '$outputdir' bam_list.tsv
+]]></command>
+
+
+  <inputs>
+    <param name="pathtodata" type="text" label="Path to Data" help="Path to the main input data directory." />
+    <param name="datasubdir" type="text" label="Data Subdirectory" help="Subdirectory within the data folder (e.g., 'healthy', 'covid')." />
+    <param name="adapterfile" type="data" label="Adapter File" format="txt" />
+    <param name="genomeindex" type="text" label="Genome Index" />
+    <param name="inputdir" type="text" label="Input Directory" />
+    <param name="outputdir" type="text" label="Output Directory (created if not exists)" />
+  </inputs>
+
+  <outputs>
+    <collection name="bam_files" type="list" label="BAM files">
+      <discover_datasets pattern="(?P<name>.+)\.bam" format="bam" directory="$outputdir" recurse="true" />
+    </collection>
+  </outputs>
+
+  <help><![CDATA[
+This tool runs **Module 1** of the preprocessing pipeline.
+
+### What it does
+- Performs adapter trimming and alignment.
+- Produces BAM alignment files (one per pair of input FASTQs).
+- Preserves original grouping (e.g., `healthy`, `covid`) in subdirectories under `$outputdir`.
+
+### Inputs
+- **Path to Data**: Top-level folder containing input subdirectories.
+- **Data Subdirectory**: Subfolder under Path to Data (e.g., `healthy`).
+- **Adapter File**: Adapter sequences to trim.
+- **Genome Index**: Path to genome index for Bowtie2 aligner.
+- **Input Directory**: Location of preprocessing scripts.
+- **Output Directory**: Where the resulting BAM files will be stored.
+
+### Outputs
+- **BAM collection**: All resulting `.bam` files discovered recursively from the output directory.
+  ]]></help>
+</tool>
