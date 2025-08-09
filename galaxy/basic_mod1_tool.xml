@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tool id="module1" name="Module 1" version="2.5.6">
+<tool id="module1" name="Module 1" version="2.6.5">
     <description>Run preprocessing with user inputs</description>
 
     <requirements>
@@ -20,7 +20,7 @@
     </environment_variables>
 
     <command><![CDATA[
-    mkdir -p working_dir/genome_index_path \$output_subdir > debug_files_upload.txt 2>&1 || echo "mkdir failed" >> debug_files_upload.txt &&
+    mkdir -p working_dir/genome_index_path "\$output_subdir" > debug_files_upload.txt 2>&1 || echo "mkdir failed" >> debug_files_upload.txt &&
 
     cp "${pathtodata}" working_dir/input.tar.gz 2>> debug_files_upload.txt &&
     cp "${genomeindextar}" working_dir/genome_index_path/genome.tar.gz 2>> debug_files_upload.txt &&
@@ -36,7 +36,7 @@
     echo "genome_index_name: \$genome_index_name" >> debug_files_upload.txt &&
 
     echo "Command: $__tool_directory__/reads_preprocessing.sh -o \$output_subdir working_dir ${datasubdir} working_dir/adapter.fasta \$genome_index_name " >> debug_files_upload.txt &&
-    bash $__tool_directory__/reads_preprocessing.sh -o "\$output_subdir" working_dir "${datasubdir}" working_dir/adapter.fasta \$genome_index_name &> debug_files_upload.txt &&
+    bash $__tool_directory__/reads_preprocessing.sh -o "\$output_subdir" working_dir "${datasubdir}" working_dir/adapter.fasta "\$genome_index_name" >> log.txt 2>&1 &&
     echo "\$output_subdir" > output_manifest.txt
 
     ]]></command>
@@ -44,14 +44,15 @@
     <inputs>
         <param name="pathtodata" type="data" format="tar.gz" label="Compressed Data Directory (.tar.gz)" />
         <param name="datasubdir" type="text" label="Data Subdirectory" help="Subdirectory within the data folder (e.g., 'test_batch2025')." optional="false"/>
-        <param name="adapterfile" type="data" format="fasta" label="Adapter File" help="Upload adapter FASTA file for trimming." />
         <param name="genomeindextar" type="data" format="tar.gz" label="Genome index (Bowtie2)" />
+        <param name="adapterfile" type="data" format="fasta" label="Adapter File" help="Upload adapter FASTA file for trimming." />
     </inputs>
 
     <outputs>
         <!-- At least one guaranteed output -->
         <data name="debug_output" format="txt" label="Debug Output Module1" from_work_dir="debug_files_upload.txt"/>
-        <data name="ouput_manifest" format="txt" label="Manifest of path with output files" from_work_dir="output_manifest.txt"/>
+        <data name="script_output" format="txt" label="Log" from_work_dir="log.txt"/>
+        <data name="output_manifest" format="txt" label="Manifest of path with output files" from_work_dir="output_manifest.txt"/>
     </outputs>
 
     <help><![CDATA[
