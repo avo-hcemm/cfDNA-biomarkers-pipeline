@@ -1,17 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tool id="modules input validation" name="Modules Input" version="1.5.3">
+<tool id="modules input validation" name="Modules Input" version="1.5.5">
     <description>User input validation</description>
 
     <requirements>
         <!-- Container -->
         <container type="docker">avohcemm/biomarkersearch-mod1to6:galaxytool_2</container>
-        <!-- Explicit Conda dependencies -->
-    <requirement type="package" version="0.11.9">fastqc</requirement>
-    <requirement type="package" version="1.11">multiqc</requirement>
-    <requirement type="package" version="0.39">trimmomatic</requirement>
-    <requirement type="package" version="2.5.1">bowtie2</requirement>
-    <requirement type="package" version="1.20.0">samtools</requirement>
-    <requirement type="package" version="2.27.4">picard</requirement>
     </requirements>
 
     <environment_variables>
@@ -63,6 +56,9 @@
         <data name="validated_data" format="tar.gz" label="Validated Data" from_work_dir="input_validated.tar.gz"/>
         <data name="validated_genome_index" format="tar.gz" label="Validated Genome Index" from_work_dir="genome_index_validated.tar.gz"/>
         <data name="validated_adapter" format="fasta" label="Validated Adapter File" from_work_dir="adapter.fasta"/>
+        <data name="validated_genomeinfo" type="data" format="csv" label="Genome Info CSV" from_work_dir="genome.csv"/>
+        <data name="validated_parametersinfo" type="data" format="csv" label="Parameters Info 1-column CSV" from_work_dir="params.csv"/>
+        <data name="validated_datainfo" type="data" format="csv" optional="true" label="Data Info CSV (optional)" from_work_dir="data.csv" />
     </outputs>
 
     <help><![CDATA[

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tool id="test_module2to6" name="Run test Modules 2–6" version="1.6.7">
+<tool id="test_module2to6" name="Run test Modules 2–6" version="1.6.9">
   <description>Run biomarker discovery (modules 2–6) per chromosome - complete</description>
 
    <requirements>
@@ -8,18 +8,19 @@
 
   <command><![CDATA[
     
-    mkdir -p "working_dir/samples/${species}" working_dir/jars working_dir/config "working_dir/input/${species}" "working_dir/genome/${species}/hg38" working_dir/KL_output working_dir/CNA_compositions &&
+    mkdir -p "working_dir/samples/${species}" working_dir/jars working_dir/config "working_dir/input/${species}" "working_dir/genome/${species}/hg38" working_dir/python &&
 
     echo "subfolders creation inside working directory:" > debug_files_upload.txt &&
     ls -lh working_dir >> debug_files_upload.txt &&
 
     cp "${sample_tarball}" working_dir/samplesdata.tar.gz 2>> debug_files_upload.txt &&
-    { tar --strip-components=1 -xzf working_dir/samplesdata.tar.gz -C "working_dir/samples/${species}" 2>> debug_files_upload.txt &&
+    { tar --strip-components=1 --exclude='._*' -xzf working_dir/samplesdata.tar.gz -C "working_dir/samples/${species}" 2>> debug_files_upload.txt &&
     echo "Samples bam files extraction succeeded" >> debug_files_upload.txt; } || { echo "Samples bam files extraction failed" >> debug_files_upload.txt; } &&
 
     cp "$__tool_directory__/config/log4j2.xml" working_dir/config/log4j2.xml 2>> debug_files_upload.txt &&
     cp "$__tool_directory__/jcna-biomrkrs-v06.jar" working_dir/jars/jtool.jar 2>> debug_files_upload.txt &&  
     cp -r "$__tool_directory__/genome/${species}/hg38/"* "working_dir/genome/${species}/hg38" 2>> debug_files_upload.txt && 
+    cp -r "$__tool_directory__/python/"* "working_dir/python" 2>> debug_files_upload.txt && 
 
     { cp "${genomeinfo}" "working_dir/input/${species}/genome.csv" 2>> debug_files_upload.txt &&
     echo "Genome data copy succeeded" >> debug_files_upload.txt; } || { echo "Genome data copy failed" >> debug_files_upload.txt; } &&
