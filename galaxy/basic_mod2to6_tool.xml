@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tool id="test_module2to6" name="Run test Modules 2–6" version="1.6.9">
+<tool id="module2to6" name="Modules 2–6" version="1.7.2">
   <description>Run biomarker discovery (modules 2–6) per chromosome - complete</description>
 
    <requirements>
     <container type="docker">avohcemm/biomarkersearch-mod1to6:galaxytool_2</container>
   </requirements>
 
-  <command><![CDATA[
-    
+  <command detect_errors="exit_code"><![CDATA[
     mkdir -p "working_dir/samples/${species}" working_dir/jars working_dir/config "working_dir/input/${species}" "working_dir/genome/${species}/hg38" working_dir/python &&
 
     echo "subfolders creation inside working directory:" > debug_files_upload.txt &&
@@ -41,7 +40,7 @@
       "input/${species}/param.csv" \
       "input/${species}/data.csv" \
       "${species}" \
-      --chromosome "${chromosome}" 
+      --chromosome "${chromosomes}" \
 
     #else
       echo "No data info provided." >> debug_files_upload.txt &&
@@ -50,18 +49,17 @@
       "input/${species}/genome.csv" \
       "input/${species}/param.csv" \
       "${species}" \
-      --chromosome "${chromosome}" 
+      --chromosome "${chromosomes}" 
     #end if
-
   ]]></command>
 
 
   <inputs>
     <param name="genomeinfo" type="data" format="csv" label="Genome Info CSV" />
+    <param name="chromosomes" type="data_collection" label="Chromosome files" format="txt"/>
     <param name="parametersinfo" type="data" format="csv" label="Parameters Info CSV" />
     <param name="datainfo" type="data" format="csv" optional="true" label="Data Info CSV (optional)" />
     <param name="species" type="text" label="Species" optional="false"/>
-    <param name="chromosome" type="text" label="Chromosome" optional="false"/>
     <param name="sample_tarball" type="data" format="tar.gz" label="Compressed Sample bam files Directory (.tar.gz)" />
   </inputs>
 

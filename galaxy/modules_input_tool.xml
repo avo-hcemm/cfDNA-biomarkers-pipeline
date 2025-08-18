@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tool id="modules input validation" name="Modules Input" version="1.5.5">
+<tool id="modules_input_validation" name="Modules Input" version="1.6.3">
     <description>User input validation</description>
 
     <requirements>
@@ -7,38 +7,39 @@
         <container type="docker">avohcemm/biomarkersearch-mod1to6:galaxytool_2</container>
     </requirements>
 
-    <environment_variables>
-        <environment_variable name="error_flag">error_flag</environment_variable>
-    </environment_variables>
-
-    <command><![CDATA[
-    { mkdir -p working_dir || echo "mkdir failed" &&
-    { cp "${pathtodata}" input.tar.gz && echo "Data Copy succeeded"; error_flag=0; } || { echo "Data Copy failed"; error_flag=1; } &&
-    { tar --strip-components=1 -xzf input.tar.gz -C working_dir && echo "Extraction succeeded"; } || { echo "Extraction failed"; error_flag=1; } &&
-    echo "After input data copying and extraction:" &&
-    ls -lh working_dir && 
-    { tar -czf input_validated.tar.gz -C working_dir . && echo "Compression succeeded"; } || { echo "Compression failed"; error_flag=1; } &&
-    echo "Main directory after input compression:" &&
-    ls -lh . && 
-    mkdir -p working_dir/genome_index_path || echo "mkdir failed" &&
-    { cp "${genomeindextar}" genome.tar.gz && echo "Genome Copy succeeded"; } || { echo "Genome Copy failed"; error_flag=1; } &&
-    { tar -xzf genome.tar.gz -C working_dir/genome_index_path && echo "Extraction succeeded"; } || { echo "Extraction failed"; error_flag=1; } &&
-    echo "After genome index copying and extraction:" &&
-    ls -lh working_dir/genome_index_path &&
-    { tar -czf genome_index_validated.tar.gz -C working_dir/genome_index_path . && echo "Compression succeeded"; } || { echo "Compression failed"; error_flag=1; } &&
-    echo "Main directory after genome index compression:" &&
-    ls -lh . && 
-    { cp "${adapterfile}" adapter.fasta && echo "Adapter Copy succeeded"; } || { echo "Adapter Copy failed"; error_flag=1; } &&
-    grep -q '^>' adapter.fasta && echo "FASTA format check passed" || { echo "Error: Adapter file is not in FASTA format (missing '>' header line)"; error_flag=1; } &&
-    { cp "${datainfo}" data.csv && echo "Data Info Copy succeeded"; } || { echo " Data Info Copy failed"; error_flag=1;} &&
-    grep -q ','  data.csv && echo "CSV comma separated format check passed" || { echo "Error: Data Info file is not in csv format (missing comma)"; error_flag=1; } &&
-    { cp "${genomeinfo}" genome.csv && echo "Genome Info Copy succeeded"; } || { echo "Genome Info Copy failed"; error_flag=1;} && 
-    grep -q ',' genome.csv && echo "CVS comma separated format check passed" || { echo "Error: Genome Info file is not in csv format (missing ',' separator)"; error_flag=1; } &&
-    { cp "${parametersinfo}" params.csv && echo "Parameters Info Copy succeeded"; } || { echo "Parameters Info Copy failed"; error_flag=1; } && 
-    grep -q ',' params.csv && { echo "Error: Parameters Info file has more than 1 column (commas found)"; } || echo "No commas found in Parameters Info file" &&
-    [ "`wc -l params.csv | awk '{print $1}'`" -lt 4 ] && { echo "Error: params.csv must contain at least 4 parameters"; error_flag=1;} || { echo "Parameters Info file: Line count check passed"; } &&
-    ls -lh . && 
-    { [ \$error_flag -eq 0 ] && echo "Input data validation success!"; }|| echo "ERROR during Input data validation!"; 
+    <command detect_errors="exit_code"><![CDATA[
+    { 
+        mkdir -p working_dir chromosomes || { echo "mkdir failed"; exit 1; } &&
+        { cp "${pathtodata}" input.tar.gz && echo "Data Copy succeeded"; } || { echo "Data Copy failed"; exit 1; } &&
+        { tar --strip-components=1 -xzf input.tar.gz -C working_dir && echo "Extraction succeeded"; } || { echo "Extraction failed"; exit 1; } &&
+        echo "After input data copying and extraction:" &&
+        ls -lh working_dir && 
+        { tar -czf input_validated.tar.gz -C working_dir . && echo "Compression succeeded"; } || { echo "Compression failed"; exit 1; } &&
+        echo "Main directory after input compression:" &&
+        ls -lh . && 
+        mkdir -p working_dir/genome_index_path || echo "mkdir failed" &&
+        { cp "${genomeindextar}" genome.tar.gz && echo "Genome Copy succeeded"; } || { echo "Genome Copy failed"; exit 1; } &&
+        { tar -xzf genome.tar.gz -C working_dir/genome_index_path && echo "Extraction succeeded"; } || { echo "Extraction failed"; exit 1; } &&
+        echo "After genome index copying and extraction:" &&
+        ls -lh working_dir/genome_index_path &&
+        { tar -czf genome_index_validated.tar.gz -C working_dir/genome_index_path . && echo "Compression succeeded"; } || { echo "Compression failed"; exit 1; } &&
+        echo "Main directory after genome index compression:" &&
+        ls -lh . && 
+        { cp "${adapterfile}" adapter.fasta && echo "Adapter Copy succeeded"; } || { echo "Adapter Copy failed"; exit 1; } &&
+        grep -q '^>' adapter.fasta && echo "FASTA format check passed" || { echo "Error: Adapter file is not in FASTA format (missing '>' header line)"; exit 1; } &&
+        { cp "${datainfo}" data.csv && echo "Data Info Copy succeeded"; } || { echo " Data Info Copy failed"; exit 1; } &&
+        grep -q ','  data.csv && echo "CSV comma separated format check passed" || { echo "Error: Data Info file is not in csv format (missing comma)"; exit 1; } &&
+        { cp "${genomeinfo}" genome.csv && echo "Genome Info Copy succeeded"; } || { echo "Genome Info Copy failed"; exit 1;} && 
+        grep -q ',' genome.csv && echo "CVS comma separated format check passed" || { echo "Error: Genome Info file is not in csv format (missing ',' separator)"; exit 1; } &&
+        awk -F',' '{outfile = "chromosomes/" $1 ".txt"; print $1 > outfile; close(outfile)}' genome.csv && echo "Chromosome label files created in chromosomes" &&
+        echo "content of chromosomes folder"  >> debug_files_upload.txt &&
+        ls -lh chromosomes >> debug_files_upload.txt &&
+        { cp "${parametersinfo}" params.csv && echo "Parameters Info Copy succeeded"; } || { echo "Parameters Info Copy failed"; exit 1; } && 
+        { grep -q ',' params.csv && echo "Error: Parameters Info file has more than 1 column (commas found)"; } || echo "No commas found in Parameters Info file" &&
+        [ "`wc -l params.csv | awk '{print $1}'`" -lt 4 ] && { echo "Error: params.csv must contain at least 4 parameters"; exit 1; } || { echo "Parameters Info file: Line count check passed"; } &&
+        echo "Main directory:" &&
+        ls -lh . && 
+        echo "Input data validation success!";
     } 2>&1 | tee -a debug_files_upload.txt
     ]]></command>
 
@@ -59,6 +60,9 @@
         <data name="validated_genomeinfo" type="data" format="csv" label="Genome Info CSV" from_work_dir="genome.csv"/>
         <data name="validated_parametersinfo" type="data" format="csv" label="Parameters Info 1-column CSV" from_work_dir="params.csv"/>
         <data name="validated_datainfo" type="data" format="csv" optional="true" label="Data Info CSV (optional)" from_work_dir="data.csv" />
+        <collection name="chromosomes" label="Chromosome files" type="list">
+            <discover_datasets pattern="__name_and_ext__" directory="chromosomes" ext="txt" visible="true"/>
+        </collection>
     </outputs>
 
     <help><![CDATA[
