@@ -11,8 +11,8 @@ CHROMOSOME_JOB=false
 CHR=""
 OUTPUTDIR=""
 
-echo "Raw arguments: $@"
-echo "number raw arguments: $#"
+echo "Number of arguments: $#"
+for i in "$@"; do echo "[$i]"; done
 
 # Trim function
 trim() {
@@ -73,20 +73,21 @@ fi
 cd "$OUTPUTDIR" || { echo "Error: Failed to change to $OUTPUTDIR"; exit 1; }
 echo "Current directory after 'cd' command:"
 ls -lh
-echo "Input directory after 'cd' command:"
-ls -lh input/*
-echo "Samples directory after 'cd' command:"
-ls -lh samples/*
-echo "Show genome file content:"
-head input/$SPECIES/genome.csv
+# echo "Input directory after 'cd' command:"
+# ls -lh input/*
+# echo "samples/human/covid directory after 'cd' command:"
+# ls -lhR samples/
+# echo "Show genome file content:"
+# head input/$SPECIES/genome.csv
 # echo "Now in: $PWD"
 
-# echo "check the actual file type"
-# file input/genome.csv
-# file $GENOMEINFO
+CPUS_PER_TASK=${GALAXY_SLOTS:-50}
+TOTAL_MEM_MB=${GALAXY_MEMORY_MB:-64000}
+MEM_PER_CPU_MB=$(( TOTAL_MEM_MB / CPUS_PER_TASK ))
+HEAP_MEM_GB=$(( TOTAL_MEM_MB * 9 / 10240 ))  # 9/10 of total memory in GB
 
 # Auxiliary parameters to run the jar file
-HEAP_SIZE=${JAVA_HEAP:-32g}
+HEAP_SIZE=${HEAP_MEM_GB:-32}G
 JAR_PATH=${JAR_PATH:-jars/jtool.jar}
 LOGFILE_PATH=${LOGFILE_PATH:-config/log4j2.xml}
 echo "Java command: java -Xmx$HEAP_SIZE -Dlog4j.configurationFile=$LOGFILE_PATH -jar $JAR_PATH ..."
