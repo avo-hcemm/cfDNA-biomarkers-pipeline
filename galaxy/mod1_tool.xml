@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tool id="module1" name="Module 1" version="2.7.5">
-    <description>Sequencing data preprocessing (pipeline module 1)</description>
+<tool id="module1" name="Module 1" version="2.7.7">
+    <description>Data preprocessing (pipeline module 1)</description>
 
     <requirements>
         <!-- Container -->
@@ -25,7 +25,7 @@
     echo "genome_index_name: \$genome_index_name" >> debug_files_upload.txt &&
 
     echo "Command: $__tool_directory__/reads_preprocessing.sh -o \$output_subdir working_dir ${datasubdir} working_dir/adapter.fasta \$genome_index_name " >> debug_files_upload.txt &&
-    bash $__tool_directory__/reads_preprocessing.sh -o "\$output_subdir" working_dir "${datasubdir}" working_dir/adapter.fasta "\$genome_index_name" > log.txt 2>&1 || 
+    bash "$__tool_directory__/reads_preprocessing.sh" -o "\$output_subdir" working_dir "${datasubdir}" working_dir/adapter.fasta "\$genome_index_name" >> log.txt 2>&1 || 
     { echo "Reads preprocessing script failed" >> debug_files_upload.txt; exit 1; } &&
     echo "\$output_subdir" >> debug_files_upload.txt &&
     { tar -czf compresseddata.tar.gz -C "\$output_subdir" . && echo "Output files compression succeeded"; } || { echo "Output files compression failed"; error_flag=1; } &&
@@ -39,20 +39,42 @@
     </environment_variables>
 
     <inputs>
-        <param name="pathtodata" type="data" format="tar.gz" label="Compressed Data Directory (.tar.gz)" />
-        <param name="datasubdir" type="text" label="Data Subdirectory" help="Subdirectory within the data folder (e.g., 'test_batch2025')." optional="false"/>
-        <param name="genomeindextar" type="data" format="tar.gz" label="Genome index (Bowtie2)" />
-        <param name="adapterfile" type="data" format="fasta" label="Adapter File" help="Upload adapter FASTA file for trimming." />
+        <param name="sequencingdata" type="data" format="tar.gz" label="Compressed_Data_Directory" help="Compressed directory with sequencing data for preprocessing (tar.gz)"/>
+        <param name="datasubdir" type="text" label="Data_Subdirectory" help="Subdirectory within the data folder (e.g., 'test_batch2025')." optional="false"/>
+        <param name="genomeindextar" type="data" format="tar.gz" label="Genome_index_(Bowtie2)" />
+        <param name="adapterfile" type="data" format="fasta" label="Adapter_File" help="Upload adapter FASTA file for trimming." />
     </inputs>
 
     <outputs>
         <!-- At least one guaranteed output -->
         <data name="debug_output" format="txt" label="Debug_Output_Module1" from_work_dir="debug_files_upload.txt"/>
         <data name="script_output" format="txt" label="Log" from_work_dir="log.txt"/>
-        <data name="tarred_output" format="tar.gz" label="Compressed_Sample_bam_files_Directory_(.tar.gz)" from_work_dir="compresseddata.tar.gz" />
+        <data name="aligned_data" format="tar.gz" label="Compressed_bam_files_Directory" from_work_dir="compresseddata.tar.gz" />
     </outputs>
 
     <help><![CDATA[
-This tool extracts your input text message and writes a debug log with the executed command and extracted contents.
+This tool runs **Modules 1** of the biomarker discovery pipeline.
+
+### What it does (in order)
+1) Adapter trimming and quality filtering (Trimmomatic).
+2) Alignment to the reference genome (Bowtie2).
+3) Duplicate marking/removal.
+4) MultiQC report generation (included in debug output, not shown separately in Galaxy).
+
+### Inputs
+- **Compressed_Data_Directory**: Provide a `.tar.gz` archive containing raw sequencing data (e.g., paired-end FASTQ files).
+- **Data_Subdirectory**: Enter the name of the subdirectory within the dataset (e.g., `test_batch2025`).
+- **Genome_index_(Bowtie2)**: Upload a Bowtie2 genome index packaged as a `.tar.gz` archive.
+- **Adapter_File**: Upload a FASTA file containing adapter sequences for trimming.
+
+### Outputs
+- **Compressed_Sample_bam_files_Directory**: Archive containing aligned BAM files after preprocessing, alignment, and deduplication.  
+- **Log**: Text log of the pipeline run (`log.txt`).  
+- **Debug_Output_Module1**: Debug information and reports (`debug_files_upload.txt`), including MultiQC summary files.
+
+---
+
+These outputs provide both the processed BAM files for downstream analysis and the accompanying logs/metrics for quality control and troubleshooting.
+
     ]]></help>
 </tool>

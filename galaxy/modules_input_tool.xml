@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tool id="modules_input_validation" name="Modules Input" version="1.6.3">
+<tool id="modules_input_validation" name="Modules Input" version="1.6.6">
     <description>User input validation</description>
 
     <requirements>
@@ -27,8 +27,15 @@
         ls -lh . && 
         { cp "${adapterfile}" adapter.fasta && echo "Adapter Copy succeeded"; } || { echo "Adapter Copy failed"; exit 1; } &&
         grep -q '^>' adapter.fasta && echo "FASTA format check passed" || { echo "Error: Adapter file is not in FASTA format (missing '>' header line)"; exit 1; } &&
-        { cp "${datainfo}" data.csv && echo "Data Info Copy succeeded"; } || { echo " Data Info Copy failed"; exit 1; } &&
-        grep -q ','  data.csv && echo "CSV comma separated format check passed" || { echo "Error: Data Info file is not in csv format (missing comma)"; exit 1; } &&
+        #if $datainfo and $datainfo != "None"
+            { cp "${datainfo}" data.csv && echo "Data Info Copy succeeded"; } || 
+            { echo " Data Info Copy failed"; 
+                exit 1; 
+            } &&
+            grep -q ','  data.csv && echo "CSV comma separated format check passed" || { echo "Error: Data Info file is not in csv format (missing comma)"; 
+            exit 1; 
+            } &&
+        #end if
         { cp "${genomeinfo}" genome.csv && echo "Genome Info Copy succeeded"; } || { echo "Genome Info Copy failed"; exit 1;} && 
         grep -q ',' genome.csv && echo "CVS comma separated format check passed" || { echo "Error: Genome Info file is not in csv format (missing ',' separator)"; exit 1; } &&
         awk -F',' '{outfile = "chromosomes/" $1 ".txt"; print $1 > outfile; close(outfile)}' genome.csv && echo "Chromosome label files created in chromosomes" &&
@@ -44,28 +51,58 @@
     ]]></command>
 
     <inputs>
-        <param name="pathtodata" type="data" format="tar.gz" label="Compressed Data Directory (.tar.gz)"/>
-        <param name="adapterfile" type="data" format="fasta" label="Adapter File" help="Upload adapter FASTA file for trimming."/>
-        <param name="genomeindextar" type="data" format="tar.gz" label="Bowtie2 Genome index (.tar.gz)"/>
-        <param name="genomeinfo" type="data" format="csv" label="Genome Info CSV" />
-        <param name="parametersinfo" type="data" format="csv" label="Parameters Info 1-column CSV" />
-        <param name="datainfo" type="data" format="csv" optional="true" label="Data Info CSV (optional)" />
+        <param name="sequencingdata" type="data" format="tar.gz" label="Compressed_Data_Directory (.tar.gz)"/>
+        <param name="adapterfile" type="data" format="fasta" label="Adapter_File" help="Upload adapter FASTA file for trimming."/>
+        <param name="genomeindextar" type="data" format="tar.gz" label="Bowtie2_Genome_index"/>
+        <param name="genomeinfo" type="data" format="csv" label="Genome_Info_CSV" />
+        <param name="parametersinfo" type="data" format="csv" label="Parameters_Info_1col_CSV" />
+        <param name="datainfo" type="data" format="csv" optional="true" label="Data_Info_CSV" help="If the input data for downstream analysis differ (optional)" />
     </inputs>
 
     <outputs>
-        <data name="debug_output" format="txt" label="Debug Output Module1" from_work_dir="debug_files_upload.txt"/>
-        <data name="validated_data" format="tar.gz" label="Validated Data" from_work_dir="input_validated.tar.gz"/>
-        <data name="validated_genome_index" format="tar.gz" label="Validated Genome Index" from_work_dir="genome_index_validated.tar.gz"/>
-        <data name="validated_adapter" format="fasta" label="Validated Adapter File" from_work_dir="adapter.fasta"/>
-        <data name="validated_genomeinfo" type="data" format="csv" label="Genome Info CSV" from_work_dir="genome.csv"/>
-        <data name="validated_parametersinfo" type="data" format="csv" label="Parameters Info 1-column CSV" from_work_dir="params.csv"/>
-        <data name="validated_datainfo" type="data" format="csv" optional="true" label="Data Info CSV (optional)" from_work_dir="data.csv" />
-        <collection name="chromosomes" label="Chromosome files" type="list">
+        <data name="debug_output" format="txt" label="Debug_Output_Inputs" from_work_dir="debug_files_upload.txt"/>
+        <data name="validated_data" format="tar.gz" label="Validated_Data" from_work_dir="input_validated.tar.gz"/>
+        <data name="validated_genome_index" format="tar.gz" label="Validated_Genome_Index" from_work_dir="genome_index_validated.tar.gz"/>
+        <data name="validated_adapter" format="fasta" label="Validated Adapter_File" from_work_dir="adapter.fasta"/>
+        <data name="validated_genomeinfo" type="data" format="csv" label="Genome_Info_CSV" from_work_dir="genome.csv"/>
+        <data name="validated_parametersinfo" type="data" format="csv" label="Parameters_Info_CSV" from_work_dir="params.csv"/>
+        <data name="validated_datainfo" type="data" format="csv" optional="true" label="Data_Info_CSV_(optional)" from_work_dir="data.csv" />
+        <collection name="chromosomes" label="Chromosome_files" type="list">
             <discover_datasets pattern="__name_and_ext__" directory="chromosomes" ext="txt" visible="true"/>
         </collection>
     </outputs>
 
-    <help><![CDATA[
-This tool extracts your input text message and writes a debug log with the executed command and extracted contents.
-    ]]></help>
+   <help><![CDATA[
+This tool validates the user input for the biomarker discovery pipeline.
+
+### What it does
+- Checks that the compressed sequencing data archive can be uncompressed.  
+- Validates the adapter FASTA file, Bowtie2 genome index, and genome/parameter/data CSV files.  
+- Generates validated copies of all inputs for downstream processing.  
+- Splits the genome/chromosome information into individual chromosome files (exposed as a dataset collection).  
+- Generates debug information for troubleshooting any input issues.
+
+### Inputs
+- **Compressed_Data_Directory**: `.tar.gz` archive containing raw sequencing reads.  
+- **Adapter_File**: FASTA file with adapter sequences for trimming.  
+- **Bowtie2_Genome_index**: Bowtie2 genome index archive.  
+- **Genome_Info_CSV**: CSV file containing genome configuration.  
+- **Parameters_Info_1col_CSV**: CSV file with pipeline parameters.  
+- **Data_Info_CSV (optional)**: Optional CSV with sample metadata.
+
+### Outputs
+- **Validated_Data**: Compressed archive containing validated sequencing data.  
+- **Validated_Genome_Index**: Compressed archive containing the validated genome index.  
+- **Validated Adapter_File**: Validated adapter FASTA file.  
+- **Genome_Info_CSV**: Validated genome CSV file.  
+- **Parameters_Info_CSV**: Validated parameters CSV file.  
+- **Data_Info_CSV (optional)**: Validated optional sample metadata CSV file.  
+- **Chromosome_files**: Dataset collection of individual chromosome files (`.txt`) derived from the genome info.  
+- **Debug_Output_Inputs**: Debug information detailing validation steps (`debug_files_upload.txt`).
+
+---
+
+This tool ensures that all inputs are correctly formatted and ready for downstream modules in the biomarker discovery pipeline.
+]]></help>
+
 </tool>
