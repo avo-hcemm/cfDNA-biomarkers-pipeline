@@ -14,7 +14,7 @@
     echo "subfolders creation inside working directory:" > debug_files_upload.txt &&
     ls -lh working_dir >> debug_files_upload.txt &&
 
-    cp "${sample_tarball}" working_dir/samplesdata.tar.gz 2>> debug_files_upload.txt &&
+    cp "${aligned_data}" working_dir/samplesdata.tar.gz 2>> debug_files_upload.txt &&
     { tar --strip-components=1 --exclude='._*' -xzf working_dir/samplesdata.tar.gz -C "working_dir/samples/" 2>> debug_files_upload.txt &&
     echo "Samples bam files extraction succeeded" >> debug_files_upload.txt; } || { echo "Samples bam files extraction failed" >> debug_files_upload.txt; } &&
      echo "data samples in working directory:" >> debug_files_upload.txt &&

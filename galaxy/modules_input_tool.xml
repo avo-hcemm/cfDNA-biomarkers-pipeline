@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tool id="modules_input_validation" name="Modules Input" version="1.6.6">
+<tool id="modules_input_validation" name="Modules Input" version="1.6.7">
     <description>User input validation</description>
 
     <requirements>
@@ -10,7 +10,7 @@
     <command detect_errors="exit_code"><![CDATA[
     { 
         mkdir -p working_dir chromosomes || { echo "mkdir failed"; exit 1; } &&
-        { cp "${pathtodata}" input.tar.gz && echo "Data Copy succeeded"; } || { echo "Data Copy failed"; exit 1; } &&
+        { cp "${sequencingdata}" input.tar.gz && echo "Data Copy succeeded"; } || { echo "Data Copy failed"; exit 1; } &&
         { tar --strip-components=1 -xzf input.tar.gz -C working_dir && echo "Extraction succeeded"; } || { echo "Extraction failed"; exit 1; } &&
         echo "After input data copying and extraction:" &&
         ls -lh working_dir && 
