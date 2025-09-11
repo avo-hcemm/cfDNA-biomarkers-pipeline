@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tool id="module2to6" name="Modules 2–6" version="1.8.8">
+<tool id="module2to6" name="Modules 2–6" version="1.8.9">
   <description>Biomarker discovery per chromosome (pipeline modules 2–6) </description>
 
    <requirements>
@@ -33,7 +33,7 @@
     echo "inside working directory after copying and extraction:" >> debug_files_upload.txt &&
     ls -lh working_dir >> debug_files_upload.txt &&
 
-    #if $datainfo and $datainfo != "None"
+    #if ${datainfo} and ${datainfo} != "None" and not ($chromosomes in ["Y","M"])
       { cp "${datainfo}" "working_dir/input/${species}/data.csv" 2>> debug_files_upload.txt &&
       echo "Samples data copy succeeded" >> debug_files_upload.txt; } || { echo "Samples data copy failed" >> debug_files_upload.txt; } &&
 
@@ -44,7 +44,7 @@
       "input/${species}/data.csv" \
       "${species}" \
       --chromosome "${chromosomes}"
-    #else
+    #elif not ($chromosomes in ["Y","M"])
       echo "No data info provided." >> debug_files_upload.txt &&
       bash "$__tool_directory__/run_pipeline_module2to6.sh" \
       -o "working_dir" \
