@@ -42,8 +42,7 @@
         echo "content of chromosomes folder"  >> debug_files_upload.txt &&
         ls -lh chromosomes >> debug_files_upload.txt &&
         { cp "${parametersinfo}" params.csv && echo "Parameters Info Copy succeeded"; } || { echo "Parameters Info Copy failed"; exit 1; } && 
-        { grep -q ',' params.csv && echo "Error: Parameters Info file has more than 1 column (commas found)"; } || echo "No commas found in Parameters Info file" &&
-        [ "`wc -l params.csv | awk '{print $1}'`" -lt 4 ] && { echo "Error: params.csv must contain at least 4 parameters"; exit 1; } || { echo "Parameters Info file: Line count check passed"; } &&
+        { grep -q '[,;]' params.csv && echo "Error: Parameters Info file has more than 1 column (commas found)"; } || echo "Parameters Info file has 1 column" &&
         echo "Main directory:" &&
         ls -lh . && 
         echo "Input data validation success!";
