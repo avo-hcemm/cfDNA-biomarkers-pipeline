@@ -1,2 +1,2 @@
-H80,samples/human/test/SRR11394780_sort_ndp.bam,H80,1,healthy
-H81,samples/human/test/SRR11394781_sort_ndp.bam,H81,1,healthy
+H80,samples/human/test/SRR11394780_sort_ndp.bam,H80,healthy
+H81,samples/human/test/SRR11394781_sort_ndp.bam,H81,healthy

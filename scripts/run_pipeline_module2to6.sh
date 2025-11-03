@@ -3,62 +3,66 @@
 set -euo pipefail
 
 # Default values
+GENOMEINFO=""
+PARAMETERSINFO=""
+DATAINFO=""
+SPECIES=""
 CHROMOSOME_JOB=false
 CHR=""
 OUTPUTDIR=""
-INPUTDIR=""
 
-# Parse flags and remove them from arguments
-ARGS=()
-while [[ $# -gt 0 ]]; do
-  case "$1" in
-    --chromosome)
-      CHROMOSOME_JOB=true
-      CHR="$2"
-      shift 2
-      ;;
-    -i)
-  	  INPUTDIR="$2"
-  	  shift 2
-  	  ;;  
-  	-o)
-  	  OUTPUTDIR="$2"
-  	  shift 2
-  	  ;;
-    *)
-      ARGS+=("$1")
-      shift
-      ;;
-  esac
-done
+echo "Number of arguments: $#"
+for i in "$@"; do echo "[$i]"; done
 
-# Validation of args length 
-if [[ "${#ARGS[@]}" -lt 3 ]]; then
-  echo "Usage (skipping preprocessing): $0 <GENOMEINFO.csv> <PARAMETERSINFO.csv> [DATAINFO.csv] <SPECIES> [--chromosome CHR] -i <INPUTDIR> -o <OUTPUTDIR>"
-  exit 1
+# Trim function
+trim() {
+    local var="$*"
+    # remove leading/trailing whitespace
+    var="${var#"${var%%[![:space:]]*}"}"
+    var="${var%"${var##*[![:space:]]}"}"
+    echo -n "$var"
+}
+
+# Apply trim
+OUTPUTDIR="$(trim "$2")"
+GENOMEINFO="$(trim "$3")"
+PARAMETERSINFO="$(trim "$4")"
+
+if [[ $# -eq 5 ]]; then
+    SPECIES="$(trim "$5")"
+elif [[ $# -eq 6 ]]; then
+    DATAINFO="$(trim "$5")"
+    SPECIES="$(trim "$6")"
+elif [[ $# -eq 7 ]]; then
+    SPECIES="$(trim "$5")"
+    CHR="$(trim "$7")"
+elif [[ $# -eq 8 ]]; then
+    DATAINFO="$(trim "$5")"
+    SPECIES="$(trim "$6")"
+    CHR="$(trim "$8")"
 fi
 
-# Assign arguments based on the args length
-if [[ "${#ARGS[@]}" -eq 4 ]]; then
-  GENOMEINFO=${ARGS[0]}
-  PARAMETERSINFO=${ARGS[1]}
-  DATAINFO=${ARGS[2]}
-  SPECIES=${ARGS[3]}
-elif [[ "${#ARGS[@]}" -eq 3 ]]; then
-  GENOMEINFO=${ARGS[0]}
-  PARAMETERSINFO=${ARGS[1]}
-  SPECIES=${ARGS[2]}
-  DATAINFO=""
+
+if [[ -n "$CHR" ]]; then
+  CHROMOSOME_JOB=true
 fi
 
-# Default max heap size if not provided
+# Validation
+if [[ -z "$OUTPUTDIR"  || -z "$GENOMEINFO" || -z "$PARAMETERSINFO" || -z "$SPECIES" ]]; then
+    echo "Usage: $0 -o <OUTPUTDIR> <GENOMEINFO.csv> <PARAMETERSINFO.csv> [DATAINFO.csv] <SPECIES> [--chromosome CHR]"
+    exit 1
+fi
 
+echo "Current directory before 'cd' command:"
+ls -lh 
 
 echo "Running Java with arguments:"
-echo "GENOMEINFO: $GENOMEINFO"
-echo "PARAMETERSINFO: $PARAMETERSINFO"
-echo "DATAINFO: $DATAINFO"
-echo "SPECIES: $SPECIES"
+echo "GENOMEINFO:${GENOMEINFO}"
+echo "PARAMETERSINFO:$PARAMETERSINFO"
+echo "DATAINFO:$DATAINFO"
+echo "SPECIES:$SPECIES"
+echo "OUTPUT DIR:$OUTPUTDIR"
+echo "CHROMOSOME JOB:$CHR"
 [[ "$CHROMOSOME_JOB" == "true" ]] && echo "Chromosome: $CHR"
 
 if [[ -z "$OUTPUTDIR" ]]; then
@@ -67,20 +71,32 @@ if [[ -z "$OUTPUTDIR" ]]; then
 fi
 
 cd "$OUTPUTDIR" || { echo "Error: Failed to change to $OUTPUTDIR"; exit 1; }
+echo "Current directory after 'cd' command:"
+ls -lh
+# echo "Input directory after 'cd' command:"
+# ls -lh input/*
+# echo "samples/human/covid directory after 'cd' command:"
+# ls -lhR samples/
+# echo "Show genome file content:"
+# head input/$SPECIES/genome.csv
+# echo "Now in: $PWD"
 
-echo "Now in: $PWD"
+CPUS_PER_TASK=${GALAXY_SLOTS:-1}
+TOTAL_MEM_MB=${GALAXY_MEMORY_MB:-32000}
+MEM_PER_CPU_MB=$(( TOTAL_MEM_MB / CPUS_PER_TASK ))
+HEAP_MEM_GB=$(( TOTAL_MEM_MB * 9 / 10240 ))  # 9/10 of total memory in GB
 
 # Auxiliary parameters to run the jar file
-HEAP_SIZE=${JAVA_HEAP:-32g}
-JAR_PATH=${JAR_PATH:-"$INPUTDIR"/jars/jcna-kldiv_16.jar}
-LOGFILE_PATH="$INPUTDIR"/config/log4j2.xml
-echo "Java command: java -Xmx$HEAP_SIZE -Dlog4j.configurationFile=$LOGFILE_PATH -jar $JAR_PATH ..."
+# Define CLASSPATH if not already set in the environment
+CLASSPATH=${CLASSPATH:-/app/jars/jcna-biomrkrs-v11.2.3.jar:/app/libs/all-libraries.jar:/app/libs/zstd-jni-1.5.7-4-linux_amd64.jar}
+HEAP_SIZE=${HEAP_MEM_GB:-32}G
+LOGFILE_PATH=${LOGFILE_PATH:-/app/config/log4j2.xml}
+echo "Java command: java -Xmx$HEAP_SIZE -Dlog4j.configurationFile=$LOGFILE_PATH -cp "$CLASSPATH" task.test.Jcna_input ..."
 
 # Run Java analysis with or without chromosome and DATAINFO
 if [[ -n "$DATAINFO" && "$CHROMOSOME_JOB" == "true" ]]; then
 echo "Running with data file & chromosome for the job"
-  java -Xmx"$HEAP_SIZE" -Dlog4j.configurationFile="$LOGFILE_PATH" -jar \
-    "$JAR_PATH" \
+  java -Xmx"$HEAP_SIZE" -Dlog4j.configurationFile="$LOGFILE_PATH" -cp "$CLASSPATH" task.test.Jcna_input \
     "$GENOMEINFO" \
     "$PARAMETERSINFO" \
     "$DATAINFO" \
@@ -88,24 +104,21 @@ echo "Running with data file & chromosome for the job"
     --chromosome "$CHR"
 elif [[ -n "$DATAINFO" && "$CHROMOSOME_JOB" == "false" ]]; then
 echo "Running with data file & no chromosome for the job"
-  java -Xmx"$HEAP_SIZE" -Dlog4j.configurationFile="$LOGFILE_PATH" -jar \
-    "$JAR_PATH" \
+  java -Xmx"$HEAP_SIZE" -Dlog4j.configurationFile="$LOGFILE_PATH" -cp "$CLASSPATH" task.test.Jcna_input \
     "$GENOMEINFO" \
     "$PARAMETERSINFO" \
     "$DATAINFO" \
     "$SPECIES" 
 elif [[ "$CHROMOSOME_JOB" == "true" ]]; then
 echo "Running with no data file & chromosome for the job"
-  java -Xmx"$HEAP_SIZE" -Dlog4j.configurationFile="$LOGFILE_PATH" -jar \
-    "$JAR_PATH" \
+  java -Xmx"$HEAP_SIZE" -Dlog4j.configurationFile="$LOGFILE_PATH" -cp "$CLASSPATH" task.test.Jcna_input \
     "$GENOMEINFO" \
     "$PARAMETERSINFO" \
     "$SPECIES" \
     --chromosome "$CHR"
 else
 echo "Running with no data file & no chromosome for the job"
-  java -Xmx"$HEAP_SIZE" -Dlog4j.configurationFile="$LOGFILE_PATH" -jar \
-    "$JAR_PATH" \
+  java -Xmx"$HEAP_SIZE" -Dlog4j.configurationFile="$LOGFILE_PATH" -cp "$CLASSPATH" task.test.Jcna_input \
     "$GENOMEINFO" \
     "$PARAMETERSINFO" \
     "$SPECIES"
