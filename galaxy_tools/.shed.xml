@@ -1,0 +1,25 @@
+name: biomarkersearch_pipeline
+owner: Alessandra Vittorini Orgeas
+description: cfDNA biomarker discovery pipeline integrated with SLURM and Docker
+homepage_url: https://github.com/avo-hcemm/biomarkersearch-pipeline
+remote_repository_url: https://github.com/avo-hcemm/biomarkersearch-pipeline
+type: unrestricted
+categories:
+  - Sequencing
+  - Data Processing
+long_description: |
+  **biomarkersearch-pipeline** is a bioinformatics workflow for identifying biomarkers 
+  from sequencing data derived from cell-free DNA in human plasma samples. 
+  The identified biomarkers can be used in downstream clinical applications, 
+  such as PCR-based screening and diagnostic tests.
+
+  The Galaxy-based interface allows users to upload data and monitor workflow execution. 
+  The Galaxy server interacts with the SLURM scheduler to submit jobs on HPC clusters.
+
+  **Key features:**
+  - Preprocessing, alignment, and statistical analysis of cfDNA sequencing data  
+  - Supports large datasets (100+ samples) and multiple cohorts  
+  - Integrates a custom Java tool with standard bioinformatics utilities  
+  - Available for local installation or Docker-based use  
+
+  📘 For full documentation, see the [GitHub README](https://github.com/avo-hcemm/biomarkersearch-pipeline).

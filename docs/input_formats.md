@@ -33,17 +33,9 @@ C60_test5,samples/human/test5/SRR11394760.bam,H60,1,case
 Specifies preprocessing and filtering parameters.
 
 ** 1  column table - Required entries:**
-- `window length`: region size for window coverage
-- `neighborhood length`: region size for neighborhood peaks suppression
-- `topN`: the number of marker regions discriminated by the KL divergence
-- `overlap resolution`: resolution of the algorithm that solves an overlapping annotation (by defualt 2)
-- `repeat family`: composition analysis targets these DNA repeat families 
+- `repeat family`: composition analysis targets these DNA repeat families. If empty, the compositional analysis is skipped 
 
 **Example:**
-200
-200
-3
-2
 Alu
 L1
 centr

@@ -1,0 +1,33 @@
+<job_conf>
+  <plugins>
+    <!-- Local jobs -->
+    <plugin id="local" type="runner" load="galaxy.jobs.runners.local:LocalJobRunner"/>
+    
+    <!-- SLURM jobs -->
+    <plugin id="slurm" type="runner" load="galaxy.jobs.runners.slurm:SlurmJobRunner"/>
+  </plugins>
+
+  <destinations default="local">
+    <!-- Default: local execution -->
+    <destination id="local" runner="local"/>
+
+    <!-- SLURM destination (for heavier modules) -->
+    <destination id="slurm_mod1" runner="slurm">
+      <!-- This is where you request SLURM resources -->
+      <param id="nativeSpecification">-time=3-00:00:00 --cpus-per-task=50 --mem-per-cpu=20G --ntasks=1</param>
+    </destination>
+    <destination id="slurm_mod2to6" runner="slurm">
+      <!-- This is where you request SLURM resources -->
+      <param id="nativeSpecification">-time=1-00:00:00 --cpus-per-task=50 --mem-per-cpu=20G --ntasks=1</param>
+    </destination>
+  </destinations>
+
+  <tools>
+    <!-- Validation stays local -->
+    <tool id="modules_input_validation" destination="local"/>
+
+    <!-- Both mod1 and mod2to6 go to SLURM -->
+    <tool id="module1" destination="slurm_mod1"/>
+    <tool id="module2to6" destination="slurm_mod2to6"/>
+  </tools>
+</job_conf>
