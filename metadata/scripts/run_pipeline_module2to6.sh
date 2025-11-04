@@ -24,7 +24,15 @@ trim() {
 }
 
 # Apply trim
-OUTPUTDIR="$(trim "$2")"
+# Parse -o flag
+if [[ "$1" == "-o" ]]; then
+  OUTPUTDIR="$2"
+  shift 2
+else
+  echo "Error: Missing -o flag. Usage: $0 -o <OUTPUTDIR> <GENOMEINFO.csv> <PARAMETERSINFO.csv> [DATAINFO.csv] <SPECIES> [--chromosome CHR]"
+  exit 1
+fi
+
 GENOMEINFO="$(trim "$3")"
 PARAMETERSINFO="$(trim "$4")"
 
@@ -73,13 +81,6 @@ fi
 cd "$OUTPUTDIR" || { echo "Error: Failed to change to $OUTPUTDIR"; exit 1; }
 echo "Current directory after 'cd' command:"
 ls -lh
-# echo "Input directory after 'cd' command:"
-# ls -lh input/*
-# echo "samples/human/covid directory after 'cd' command:"
-# ls -lhR samples/
-# echo "Show genome file content:"
-# head input/$SPECIES/genome.csv
-# echo "Now in: $PWD"
 
 CPUS_PER_TASK=${GALAXY_SLOTS:-1}
 TOTAL_MEM_MB=${GALAXY_MEMORY_MB:-32000}

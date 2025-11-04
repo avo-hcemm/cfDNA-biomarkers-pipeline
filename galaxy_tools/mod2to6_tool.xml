@@ -3,8 +3,7 @@
   <description>Biomarker discovery per chromosome (pipeline modules 2–6) </description>
 
    <requirements>
-    <container type="docker">avohcemm/biomarkersearch-mod1to6:galaxytool_2</container>
-    <container type="docker">avohcemm/biomarkersearch-mod2to6:galaxy_workflow</container>
+    <container type="docker">avohcemm/biomarkersearch-mod2to6:final</container>
      <resource type="ram_min">64000</resource>   <!-- RAM in MB -->
       <resource type="cores_min">50</resource>    <!-- number of CPU cores -->
   </requirements>
@@ -22,7 +21,6 @@
     ls -lhR working_dir/samples/ >> debug_files_upload.txt &&
 
     cp "$__tool_directory__/config/log4j2.xml" working_dir/config/log4j2.xml 2>> debug_files_upload.txt &&
-    cp "$__tool_directory__/jcna-biomrkrs-v06.jar" working_dir/jars/jtool.jar 2>> debug_files_upload.txt &&  
     cp -r "$__tool_directory__/genome/${species}/hg38/"* "working_dir/genome/${species}/hg38" 2>> debug_files_upload.txt && 
     cp -r "$__tool_directory__/python/"* "working_dir/python" 2>> debug_files_upload.txt && 
 
@@ -38,7 +36,7 @@
       { cp "${datainfo}" "working_dir/input/${species}/data.csv" 2>> debug_files_upload.txt &&
       echo "Samples data copy succeeded" >> debug_files_upload.txt; } || { echo "Samples data copy failed" >> debug_files_upload.txt; } &&
 
-    bash "$__tool_directory__/run_pipeline_module2to6.sh" \
+    bash "/app/run_pipeline_module2to6.sh" \
       -o "working_dir" \
       "input/${species}/genome.csv" \
       "input/${species}/param.csv" \
@@ -47,7 +45,7 @@
       --chromosome "${chromosomes}"
     #elif not ($chromosomes in ["Y","M"])
       echo "No data info provided." >> debug_files_upload.txt &&
-      bash "$__tool_directory__/run_pipeline_module2to6.sh" \
+      bash "/app/run_pipeline_module2to6.sh" \
       -o "working_dir" \
       "input/${species}/genome.csv" \
       "input/${species}/param.csv" \

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<Configuration status="WARN">
+	<Properties>
+		<Property name="filename">./logs/${env:SLURM_JOB_ID:-default}_${env:SLURM_ARRAY_TASK_ID:-0}</Property>
+	</Properties>
+	<Appenders>
+		<RollingFile name="logFile"
+			fileName="${filename}/log.log"
+			filePattern="${filename}/log-%d{yyyy-MM-dd_HH-mm-ss}.log">
+			<PatternLayout>
+				<pattern>%d{HH:mm:ss} [%t] %-5level %logger{36} - %msg%n</pattern>
+			</PatternLayout>
+			<SizeBasedTriggeringPolicy size="20 MB" />
+		</RollingFile>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout
+				pattern="%d{HH:mm:ss:SSS} [%t] %-5level %logger{36} - %msg%n" />
+		</Console>
+	</Appenders>
+	<Loggers>
+		<Logger name="analysis.test" level ="info" additivity="false">
+			<AppenderRef ref="Console" />
+		</Logger>
+		<Logger name="data.test" level ="info" additivity="false">
+			<AppenderRef ref="Console" />
+		</Logger>
+		<Logger name="jcna_debug" level ="debug" additivity="false">
+			<AppenderRef ref="Console" />
+		</Logger>
+		<Root level="info">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="logFile" />
+		</Root>
+	</Loggers>
+</Configuration>
