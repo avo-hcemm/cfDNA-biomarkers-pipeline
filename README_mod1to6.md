@@ -1,6 +1,6 @@
 # biomarkersearch-pipeline
 
-This container provides a bioinformatics pipeline to identify biomarkers from sequencing data derived from human plasma samples. The biomarkers can be used in downstream clinical applications such as PCR-based screening and diagnostic tests.
+This container provides a bioinformatics pipeline to identify biomarkers from sequencing data derived from human plasma samples. The identified biomarkers can be used in downstream clinical applications such as PCR-based screening and diagnostic tests.
 
 ---
 
@@ -20,7 +20,7 @@ The pipeline performs preprocessing, quality filtering, alignment, and statistic
 📎 For more details, refer to the [input format descriptions](docs/input_formats.md) and the [example template files](templates).
 
 ### **Output**
-- CSV file listing biomarker sequences with associated genomic coordinates
+- SVG files with plots of the coverage data and genomic coordinates associated with the candidate biomarker. 
 
 ### **Other Highlights**
 - Designed to support large datasets (e.g., HPC environments)  
@@ -122,10 +122,10 @@ docker run -it --rm \
 biomarkersearch-pipeline/
 ├── dockerfiles/
 │ └── Dockerfile_mod1to6 # Dockerfile for building the full pipeline
-├── scripts/
+├── metadata/scripts/
 │ ├── run_pipeline_module1.sh # Bash script for Module 1 (read preprocessing & alignment)
 │ └── run_pipeline_module2to6.sh # Bash script for Modules 2–6 (statistical biomarker discovery)
-├── templates/
+├── metadata/templates/
 │ ├── genome.csv # Genome configuration template
 │ ├── params.csv # Pipeline parameter template
 │ └── data.csv # Sample dataset template (optional)

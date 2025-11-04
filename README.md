@@ -1,10 +1,10 @@
 # biomarkersearch-pipeline
 
-This container provides a bioinformatics pipeline to identify biomarkers from sequencing data derived from human plasma samples. The biomarkers can be used in downstream clinical applications such as PCR-based screening and diagnostic tests.
+This container provides a bioinformatics pipeline to identify biomarkers from sequencing data derived from cell-free DNA in human plasma samples. The identified biomarkers can be used in downstream clinical applications, such as PCR-based screening and diagnostic tests.
 
 ## 🔍 Purpose
 
-The pipeline performs preprocessing, quality filtering, alignment, and statistical analysis of input DNA sequencing data. It outputs genomic regions (\~200 bp) that are significantly enriched in case vs control groups — serving as candidate biomarkers.
+The pipeline performs preprocessing, alignment to the reference genome, and statistical analysis of input DNA sequencing data. It outputs a list of genomic sequences (approximately 200 bp) that are representative of the case groups, thereby serving as candidate biomarkers.
 
 ## 🧪 Key Features
 
@@ -16,17 +16,17 @@ The pipeline performs preprocessing, quality filtering, alignment, and statistic
   📎 For more details, refer to the [input format descriptions](docs/input_formats.md) and the [example template files](templates).
 
 * **Output:**  
-  - CSV file listing biomarker sequences with associated genomic coordinates
+  - SVG files with plots of the coverage data and genomic coordinates associated with the candidate biomarker. 
 
 * **Other Highlights:**  
   - Designed to support large datasets (e.g., HPC environments)  
-  - Integrates Java and key bioinformatics tools  
+  - Integrates Java with key bioinformatics tools  
   - Compatible with Docker and Singularity
 
 ## 🚀 Usage
 
 ### Build the full pipeline container
-docker build -f dockerfiles/Dockerfile_pipeline -t avohcemm/biomarkersearch-pipeline:complete_v1.0.0 .
+` docker build -f dockerfiles/Dockerfile_pipeline -t avohcemm/biomarkersearch-pipeline:complete_v1.0.0 . `
 
 ### Docker
 
