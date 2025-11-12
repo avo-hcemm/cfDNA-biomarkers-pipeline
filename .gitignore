@@ -11,7 +11,8 @@
 galaxy_tools/galaxy_setup.docx
 
 # folders
-wdr
+wdr/
 python/
 tests/
 galaxy/old/
+__pycache__/
