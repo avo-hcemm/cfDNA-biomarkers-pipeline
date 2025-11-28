@@ -4,7 +4,7 @@
 
     <requirements>
         <!-- Container -->
-        <container type="docker">avohcemm/biomarkersearch-mod1to6:galaxytool_2</container>
+        <container type="docker">avohcemm/biomarkersearch-galaxy-wf:2811</container>
          <resource type="ram_min">64000</resource>   <!-- RAM in MB -->
         <resource type="cores_min">50</resource>    <!-- number of CPU cores -->
     </requirements>

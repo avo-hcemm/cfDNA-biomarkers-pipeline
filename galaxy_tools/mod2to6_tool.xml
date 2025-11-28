@@ -3,7 +3,7 @@
   <description>Biomarker discovery per chromosome (pipeline modules 2–6) </description>
 
    <requirements>
-    <container type="docker">avohcemm/biomarkersearch-mod2to6:final</container>
+    <container type="docker">avohcemm/biomarkersearch-galaxy-wf:2811</container>
      <resource type="ram_min">64000</resource>   <!-- RAM in MB -->
       <resource type="cores_min">50</resource>    <!-- number of CPU cores -->
   </requirements>
@@ -57,8 +57,7 @@
 
   <inputs>
     <param name="genomeinfo" type="data" format="csv" label="Genome_Info_CSV" />
-    <!-- <param name="chromosomes" type="data" format="txt" label="Chromosome_job" /> check it out 04 nov 2025-->
-    <param name="chromosomes" type="text" label="Chromosome_job" /> 
+    <param name="chromosomes" type="data" format="txt" label="Chromosome_job" />
     <param name="parametersinfo" type="data" format="csv" label="Parameters_Info_CSV" />
     <param name="datainfo" type="data" format="csv" optional="true" label="Data_Info_CSV (optional)" />
     <param name="species" type="text" label="Species" optional="false"/>

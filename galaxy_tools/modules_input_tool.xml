@@ -4,7 +4,7 @@
 
     <requirements>
         <!-- Container -->
-        <container type="docker">avohcemm/biomarkersearch-mod1to6:galaxytool_2</container>
+        <container type="docker">avohcemm/biomarkersearch-galaxy-wf:2811</container>
     </requirements>
 
     <command detect_errors="exit_code"><![CDATA[

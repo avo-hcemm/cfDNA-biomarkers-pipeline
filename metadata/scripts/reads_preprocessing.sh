@@ -140,22 +140,22 @@ for subdir in "${PATHTODATA%/}"/*/; do
     
     rm "$mapped_dir/${base}.sam"
     
-    echo 'Adding read groups to BAM ...'
-	picard AddOrReplaceReadGroups \
-  		--INPUT "$mapped_dir/${base}_sort.bam" \
-  		--OUTPUT "$mapped_dir/${base}_sort_rg.bam" \
-  		--RGID "${base}" \
-  		--RGLB "lib1" \
-  		--RGPL "ILLUMINA" \
-  		--RGPU "unit1" \
-  		--RGSM "${base}"
+  # echo 'Adding read groups to BAM ...'
+	# picard AddOrReplaceReadGroups \
+  # 		--INPUT "$mapped_dir/${base}_sort.bam" \
+  # 		--OUTPUT "$mapped_dir/${base}_sort_rg.bam" \
+  # 		--RGID "${base}" \
+  # 		--RGLB "lib1" \
+  # 		--RGPL "ILLUMINA" \
+  # 		--RGPU "unit1" \
+  # 		--RGSM "${base}"
 
-    echo 'mark-remove-duplicates picard tool is runnning ...'
-    picard MarkDuplicates \
-    -I "$mapped_dir/${base}_sort_rg.bam" \
-    -O "$mapped_dir/${base}_sort_ndp.bam" \
-    -M "$mapped_dir/${base}_sort_ndp_metrics.txt" \
-    --REMOVE_DUPLICATES true || echo "MarkDuplicates on sorted bam files failed. Skipping ..."
+  #   echo 'mark-remove-duplicates picard tool is runnning ...'
+  #   picard MarkDuplicates \
+  #   -I "$mapped_dir/${base}_sort_rg.bam" \
+  #   -O "$mapped_dir/${base}_sort_ndp.bam" \
+  #   -M "$mapped_dir/${base}_sort_ndp_metrics.txt" \
+  #   --REMOVE_DUPLICATES true || echo "MarkDuplicates on sorted bam files failed. Skipping ..."
 
     echo 'Fastqc on BAM'
     if [ -f "$mapped_dir/${base}_sort_ndp.bam" ]; then
