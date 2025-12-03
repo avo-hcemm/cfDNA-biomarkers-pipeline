@@ -4,7 +4,7 @@ set -euo pipefail
 IFS=$'\n\t'
 export LC_ALL=C
 
-for tool in trimmomatic fastqc bowtie2 samtools picard multiqc; do
+for tool in trimmomatic fastqc bowtie2 samtools multiqc; do
   if ! command -v "$tool" &> /dev/null; then
     echo "Error: Required tool '$tool' not found in PATH"
     exit 1
@@ -179,35 +179,35 @@ for subdir in "${PATHTODATA%/}"/*/; do
 
   done
 
-  # Run MultiQC for untrimmed fastqc results
-  # if compgen -G "${untrimm_fastqc_dir}"/*.zip > /dev/null 2>&1; then
-  #     echo "Running MultiQC for untrimmed: ${subfolder_name}"
-  #     multiqc "$untrimm_fastqc_dir" \
-  #       -o "$untrimm_multiqc_dir" \
-  #       -n "multiqc_untrimm_${DATA_SUBDIR}"
-  # else
-  #     echo "No FASTQC zip files found for $subfolder_name (untrimmed), skipping MultiQC."
-  # fi
+  Run MultiQC for untrimmed fastqc results
+  if compgen -G "${untrimm_fastqc_dir}"/*.zip > /dev/null 2>&1; then
+      echo "Running MultiQC for untrimmed: ${subfolder_name}"
+      multiqc "$untrimm_fastqc_dir" \
+        -o "$untrimm_multiqc_dir" \
+        -n "multiqc_untrimm_${DATA_SUBDIR}"
+  else
+      echo "No FASTQC zip files found for $subfolder_name (untrimmed), skipping MultiQC."
+  fi
   
-  # # Run MultiQC for trimmed fastqc results
-	# if compgen -G "${trimm_fastqc_dir}"/*.zip > /dev/null 2>&1; then
-	#     echo "Running MultiQC for trimmed: ${subfolder_name}"
-	#     multiqc "$trimm_fastqc_dir" \
-  #       -o "$trimm_multiqc_dir" \
-  #       -n "multiqc_trimm_${DATA_SUBDIR}"
-	# else
-  #   	echo "No FASTQC zip files found for $subfolder_name (trimmed), skipping MultiQC."
-	# fi
+  # Run MultiQC for trimmed fastqc results
+	if compgen -G "${trimm_fastqc_dir}"/*.zip > /dev/null 2>&1; then
+	    echo "Running MultiQC for trimmed: ${subfolder_name}"
+	    multiqc "$trimm_fastqc_dir" \
+        -o "$trimm_multiqc_dir" \
+        -n "multiqc_trimm_${DATA_SUBDIR}"
+	else
+    	echo "No FASTQC zip files found for $subfolder_name (trimmed), skipping MultiQC."
+	fi
 
-	# # Run MultiQC for mapped fastqc results
-	# if compgen -G "${mapped_fastqc_dir}"/*.zip > /dev/null 2>&1; then
-	#     echo "Running MultiQC for mapped: ${subfolder_name}"
-	#     multiqc "$mapped_fastqc_dir" \
-  #       -o "$mapped_multiqc_dir" \
-  #       -n "multiqc_mapped_${DATA_SUBDIR}"
-	# else
-  #   	echo "No FASTQC zip files found for $subfolder_name (mapped), skipping MultiQC."
-	# fi
+	# Run MultiQC for mapped fastqc results
+	if compgen -G "${mapped_fastqc_dir}"/*.zip > /dev/null 2>&1; then
+	    echo "Running MultiQC for mapped: ${subfolder_name}"
+	    multiqc "$mapped_fastqc_dir" \
+        -o "$mapped_multiqc_dir" \
+        -n "multiqc_mapped_${DATA_SUBDIR}"
+	else
+    	echo "No FASTQC zip files found for $subfolder_name (mapped), skipping MultiQC."
+	fi
 
 done
 
