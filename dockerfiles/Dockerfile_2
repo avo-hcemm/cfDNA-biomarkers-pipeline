@@ -55,6 +55,7 @@ COPY metadata/jars/libs/zstd-jni-1.5.7-4-linux_amd64.jar /app/libs/
 COPY metadata/scripts/run_pipeline_module2to6.sh /app/
 COPY metadata/scripts/reads_preprocessing.sh /app/
 COPY metadata/config/log4j2.xml /app/config/
+COPY metadata/python /app/python/
 
 # Set CLASSPATH for Java
 ENV CLASSPATH=/app/jars/jcna-biomrkrs-final.jar:/app/libs/all-libraries.jar:/app/libs/zstd-jni-1.5.7-4-linux_amd64.jar

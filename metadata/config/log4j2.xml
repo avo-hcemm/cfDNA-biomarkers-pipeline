@@ -11,7 +11,7 @@
 			<PatternLayout>
 				<pattern>%d{HH:mm:ss} [%t] %-5level %logger{36} - %msg%n</pattern>
 			</PatternLayout>
-			<SizeBasedTriggeringPolicy size="20 MB" />
+			<SizeBasedTriggeringPolicy size="200 KB" />
 		</RollingFile>
 		<Console name="Console" target="SYSTEM_OUT">
 			<PatternLayout
@@ -19,14 +19,9 @@
 		</Console>
 	</Appenders>
 	<Loggers>
-		<Logger name="analysis.test" level ="info" additivity="false">
+		<Logger name="jcna_analysis" level="error" additivity="false">
 			<AppenderRef ref="Console" />
-		</Logger>
-		<Logger name="data.test" level ="info" additivity="false">
-			<AppenderRef ref="Console" />
-		</Logger>
-		<Logger name="jcna_debug" level ="debug" additivity="false">
-			<AppenderRef ref="Console" />
+			<AppenderRef ref="logFile" />
 		</Logger>
 		<Root level="info">
 			<AppenderRef ref="Console" />

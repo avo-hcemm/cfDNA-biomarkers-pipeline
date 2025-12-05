@@ -179,7 +179,7 @@ for subdir in "${PATHTODATA%/}"/*/; do
 
   done
 
-  Run MultiQC for untrimmed fastqc results
+  # Run MultiQC for untrimmed fastqc results
   if compgen -G "${untrimm_fastqc_dir}"/*.zip > /dev/null 2>&1; then
       echo "Running MultiQC for untrimmed: ${subfolder_name}"
       multiqc "$untrimm_fastqc_dir" \
