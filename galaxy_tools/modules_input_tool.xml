@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tool id="modules_input_validation" name="Modules Input" version="1.6.7">
+<tool id="modules_input_validation" name="Modules Input" version="1.7.1">
     <description>User input validation</description>
 
     <requirements>
         <!-- Container -->
-        <container type="docker">avohcemm/biomarkersearch-galaxy-wf:2811</container>
+        <container type="docker">avohcemm/biomarkersearch-galaxy-wf:0812</container>
     </requirements>
 
     <command detect_errors="exit_code"><![CDATA[
