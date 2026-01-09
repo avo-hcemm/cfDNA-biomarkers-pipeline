@@ -50,9 +50,13 @@ elif [[ $# -eq 6 ]]; then
     CHR="$(trim "$6")"
 fi
 
-
 if [[ -n "$CHR" ]]; then
   CHROMOSOME_JOB=true
+fi
+
+if [[ "$CHR" == *Y* || "$CHR" == *M* ]]; then
+  echo "Chromosome $CHR is excluded from hte analysis. Exiting."
+  exit 0;
 fi
 
 # Validation

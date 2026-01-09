@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tool id="module2to6" name="Modules 2–6" version="1.8.9">
+<tool id="module2to6" name="Modules 2–6" version="2.2.2">
   <description>Biomarker discovery per chromosome (pipeline modules 2–6) </description>
 
    <requirements>
-    <container type="docker">avohcemm/biomarkersearch-galaxy-wf:2811</container>
+    <container type="docker" >avohcemm/biomarkersearch-galaxy-wf:0812</container>
      <resource type="ram_min">64000</resource>   <!-- RAM in MB -->
       <resource type="cores_min">50</resource>    <!-- number of CPU cores -->
   </requirements>
 
   <command detect_errors="exit_code"><![CDATA[
-    mkdir -p working_dir/jars working_dir/config "working_dir/samples/${species}" "working_dir/input/${species}" "working_dir/genome/${species}/hg38" working_dir/python &&
+    mkdir -p working_dir/jars working_dir/config "working_dir/samples/${species}" "working_dir/input/${species}" "working_dir/genome/${species}/hg38" "working_dir/python" "working_dir/ML_output" "working_dir/plot" &&
 
     echo "subfolders creation inside working directory:" > debug_files_upload.txt &&
     ls -lh working_dir >> debug_files_upload.txt &&
@@ -20,42 +20,51 @@
      echo "data samples in working directory:" >> debug_files_upload.txt &&
     ls -lhR working_dir/samples/ >> debug_files_upload.txt &&
 
-    cp "$__tool_directory__/config/log4j2.xml" working_dir/config/log4j2.xml 2>> debug_files_upload.txt &&
-    cp -r "$__tool_directory__/genome/${species}/hg38/"* "working_dir/genome/${species}/hg38" 2>> debug_files_upload.txt && 
-    cp -r "$__tool_directory__/python/"* "working_dir/python" 2>> debug_files_upload.txt && 
+    cp "/app/config/log4j2.xml" working_dir/config/log4j2.xml 2>> debug_files_upload.txt &&
+
+    cp "${genome_fasta}" "working_dir/genome/${species}/genome.tar.gz" &&
+    { tar --exclude='._*' -xzf working_dir/genome/${species}/genome.tar.gz -C "working_dir/genome/${species}/" 2>> debug_fasta.txt &&
+    echo "Genome fasta files extraction succeeded" >> debug_files_upload.txt; } || { echo "Genome fasta files extraction failed" >> debug_files_upload.txt; } &&
+
+    cp -r "/app/python/"* "working_dir/python" 2>> debug_files_upload.txt && 
 
     { cp "${genomeinfo}" "working_dir/input/${species}/genome.csv" 2>> debug_files_upload.txt &&
     echo "Genome data copy succeeded" >> debug_files_upload.txt; } || { echo "Genome data copy failed" >> debug_files_upload.txt; } &&
+
     { cp "${parametersinfo}" "working_dir/input/${species}/param.csv" 2>> debug_files_upload.txt &&
     echo "Parameters data copy succeeded" >> debug_files_upload.txt; } || { echo "Parameters data copy failed" >> debug_files_upload.txt; } &&
 
-    echo "inside working directory after copying and extraction:" >> debug_files_upload.txt &&
-    ls -lh working_dir >> debug_files_upload.txt &&
+    echo "inside working directory after copying and extraction:" > pipeline_log.txt &&
+    ls -lh working_dir >> pipeline_log.txt &&
+    
+    CHR=`head -n 1 "${chromosomes}"` &&
+    #if $datainfo 
+    { cp "${datainfo}" "working_dir/input/${species}/data.csv" 2>> pipeline_log.txt &&
+    echo "Samples data copy succeeded" >> debug_files_upload.txt;} &&
+    { bash "/app/run_pipeline_module2to6.sh" -o "working_dir" \
+    "input/${species}/genome.csv" \
+    "input/${species}/param.csv" \
+    "input/${species}/data.csv" \
+    "${species}" \
+    --chromosome "\$CHR";}||
+    { echo "pipeline run failed" >> pipeline_log.txt;}
+    #else
+    echo "No data info provided." >> pipeline_log.txt && 
+    { bash "/app/run_pipeline_module2to6.sh" -o "working_dir" \
+    "input/${species}/genome.csv" \
+    "input/${species}/param.csv" \
+    "${species}" \
+    --chromosome "\$CHR"; }
+    #end if 
+    && tar -czf "working_dir/ML_output.tar.gz" -C "working_dir/ML_output" .
+    && tar -czf "working_dir/plot.tar.gz" -C "working_dir/plot" .
+    && echo "Final working_dir structure:" >> pipeline_log.txt &&
+    ls -lhR working_dir >> pipeline_log.txt; 
 
-    #if ${datainfo} and ${datainfo} != "None" and not ($chromosomes in ["Y","M"])
-      { cp "${datainfo}" "working_dir/input/${species}/data.csv" 2>> debug_files_upload.txt &&
-      echo "Samples data copy succeeded" >> debug_files_upload.txt; } || { echo "Samples data copy failed" >> debug_files_upload.txt; } &&
-
-    bash "/app/run_pipeline_module2to6.sh" \
-      -o "working_dir" \
-      "input/${species}/genome.csv" \
-      "input/${species}/param.csv" \
-      "input/${species}/data.csv" \
-      "${species}" \
-      --chromosome "${chromosomes}"
-    #elif not ($chromosomes in ["Y","M"])
-      echo "No data info provided." >> debug_files_upload.txt &&
-      bash "/app/run_pipeline_module2to6.sh" \
-      -o "working_dir" \
-      "input/${species}/genome.csv" \
-      "input/${species}/param.csv" \
-      "${species}" \
-      --chromosome "${chromosomes}"
-    #end if
   ]]></command>
 
-
   <inputs>
+    <param name="genome_fasta" type="data" format="tar.gz" label="Genome_Fasta" />
     <param name="genomeinfo" type="data" format="csv" label="Genome_Info_CSV" />
     <param name="chromosomes" type="data" format="txt" label="Chromosome_job" />
     <param name="parametersinfo" type="data" format="csv" label="Parameters_Info_CSV" />
@@ -65,9 +74,10 @@
   </inputs>
 
   <outputs>
-    <data name="plots_dir" format="directory" label="Plots (Module2to6)" from_work_dir="plots"/>
+    <data name="ML_output_dir" format="tar.gz" label="ML_output" from_work_dir="working_dir/ML_output.tar.gz"/>
+    <data name="Biomarkers_plots_dir" format="tar.gz" label="Biomarkers_plots" from_work_dir="working_dir/plots.tar.gz"/>
     <data name="debug_output" format="txt" label="Debug_Output_Module2to6" from_work_dir="debug_files_upload.txt"/>
-    <data name="script_output" format="txt" label="Log" from_work_dir="log.txt"/>
+    <data name="script_output" format="txt" label="Pipeline_Log" from_work_dir="pipeline_log.txt"/>
   </outputs>
 
   <help><![CDATA[
@@ -88,8 +98,8 @@ This tool runs **Modules 2–6** of the biomarker discovery pipeline.
 - **Compressed_Sample_bam_files_Directory**: `.tar.gz` archive of aligned BAM files (output from Module 1).  
 
 ### Outputs
-- **Plots (Module2to6)**: Directory containing all plots generated by the pipeline (number of files may vary).  
-- **Log**: Text log of the pipeline run (`log.txt`).  
+- **Biomarkers_(Module2to6)**: Directory containing all plots generated by the pipeline (number of files may vary).  
+- **Pipeline_Log**: Text log of the pipeline run (`log.txt`).  
 - **Debug_Output_Module2to6**: Debug information and intermediate results (`debug_files_upload.txt`).
 
 These outputs provide both the computed results and the logs/metrics for troubleshooting, bundled into the debug output.

@@ -1,9 +1,8 @@
-# OS geenrated files
+# OS generated files
 .DS_Store
 
 # files
 *.r
-*.jar
 *.html
 *.json
 
@@ -15,4 +14,5 @@ wdr/
 python/
 tests/
 galaxy/old/
+metadata/data/
 __pycache__/

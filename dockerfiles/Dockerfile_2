@@ -39,14 +39,24 @@ RUN wget https://github.com/conda-forge/miniforge/releases/latest/download/Minif
     bash miniforge.sh -b -p /opt/conda && \
     rm miniforge.sh
 
-# Install bioinformatics tools (avoiding Java conflicts)
+
+# Install Python packages and bioinformatics tools
 RUN conda install -y -c bioconda -c conda-forge \
+    pandas numpy \
     fastqc \
     trimmomatic \
     bowtie2 \
     samtools \
     multiqc \
-    && conda clean -afy && rm -rf ~/.conda
+    scikit-learn \
+    imbalanced-learn \
+    xgboost \
+    scikit-bio \
+    scipy \
+    && conda clean -afy
+
+RUN python -m pip install --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir "shap-hypetune"
 
 # Copy pipeline files
 COPY metadata/jars/jcna-biomrkrs-final.jar /app/jars/
