@@ -49,7 +49,7 @@ RUN conda install -y -c bioconda -c conda-forge \
     && conda clean -afy && rm -rf ~/.conda
 
 # Copy pipeline files
-COPY metadata/jars/jcna-biomrkrs-final.jar /app/jars/
+COPY metadata/jars/jcna-biomrkrs-final_10.jar /app/jars/
 COPY metadata/jars/libs/all-libraries.jar /app/libs/
 COPY metadata/jars/libs/zstd-jni-1.5.7-4-linux_amd64.jar /app/libs/
 COPY metadata/scripts/run_pipeline_module2to6.sh /app/
