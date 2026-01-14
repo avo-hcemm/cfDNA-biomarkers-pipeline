@@ -60,12 +60,13 @@ echo "start date: $(date +%d%m%Y,%H:%M:%S)"
 
 
 for subdir in "${PATHTODATA%/}"/*/; do
+  subdir="${subdir%/}"
   echo "subdirectory: $subdir"
   subfolder_name=$(basename "$subdir")
   echo "Processing subfolder: $subfolder_name"
   
   shopt -s nullglob
-  files=("${subdir}"*_R1.fastq.gz)
+  files=("${subdir}"/*_R1.fastq.gz)
   shopt -u nullglob
   
   if [ ${#files[@]} -eq 0 ]; then
@@ -87,7 +88,10 @@ for subdir in "${PATHTODATA%/}"/*/; do
   mapped_fastqc_dir="$PATHTODATA/mapped/mapped_fastqc/${DATA_SUBDIR}/${subfolder_name}/"
   mapped_multiqc_dir="$PATHTODATA/mapped/mapped_fastqc/mapped_multiqc/${DATA_SUBDIR}/${subfolder_name}"
 
-  echo "Creating directories..."
+  echo "Creating directories: $untrimm_log_dir $untrimm_fastqc_dir $untrimm_multiqc_dir \
+  $trimm_dir $trimm_log_dir $trimm_fastqc_dir $trimm_multiqc_dir \
+  $mapped_dir $mapped_log_dir $mapped_fastqc_dir $mapped_multiqc_dir"
+
   mkdir -p "$untrimm_log_dir" "$untrimm_fastqc_dir" "$untrimm_multiqc_dir" \
   "$trimm_dir" "$trimm_log_dir" "$trimm_fastqc_dir" "$trimm_multiqc_dir" \
   "$mapped_dir" "$mapped_log_dir" "$mapped_fastqc_dir" "$mapped_multiqc_dir"
