@@ -1,4 +1,4 @@
-cp metadata/jars/jcna-biomrkrs-final_10.jar "{$PREFIX}/share/app/jars/"
+cp metadata/jars/jcna-biomrkrs-final_11.jar "{$PREFIX}/share/app/jars/"
 cp metadata/jars/libs/all-libraries.jar "{$PREFIX}/share/app/libs/"
 cp metadata/jars/libs/zstd-jni-1.5.7-4-linux_amd64.jar "{$PREFIX}/share/app/libs/"
 cp metadata/scripts/run_pipeline_module2to6.sh "{$PREFIX}/share/app/"
