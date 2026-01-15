@@ -1,0 +1,53 @@
+{% set name = "cfDNA-BiomarkerSearch" %}
+{% set version = "0.1.0" %}
+{% set sha256 = "ee203476d5880713c616eb703b1f3fae92b42a31ebee4563243c3ba5102c11ca" %}
+{% set repo_url = "https://github.com/avo-hcemm/cfDNA-biomarkers-pipeline" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  url: {{ repo_url }}/archive/{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+build:
+  noarch: generic
+  number: 0
+  run_exports:
+    - {{ pin_subpackage("cfDNA-BiomarkerSearch", max_pin="x.x") }}
+
+requirements:
+  run:
+    - wget
+    - ca-certificates
+    - unzip
+    - tar
+    - curl
+    - gnupg
+    - openjdk>=21
+    - fastqc
+    - trimmomatic
+    - bowtie2
+    - samtools
+    - multiqc
+
+test:
+  commands:
+    - preprocessing.sh    # need to complete
+    - run_pipeline_module2to6.sh  # need to complete
+
+about:
+  home: {{ repo_url }}
+  license: MIT
+  license_family: MIT
+  license_file: license/MIT_License
+  summary: 'Short description'    # need to complete
+  description: |    # need to complete
+    Description
+  doc_url: {{ repo_url }}/blob/master/README.md
+  dev_url: {{ repo_url }}
+
+extra:
+  recipe-maintainers:
+    - avo-hcemm
