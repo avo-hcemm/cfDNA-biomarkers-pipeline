@@ -1,0 +1,6 @@
+cp metadata/jars/jcna-biomrkrs-final_10.jar "{$PREFIX}/share/app/jars/"
+cp metadata/jars/libs/all-libraries.jar "{$PREFIX}/share/app/libs/"
+cp metadata/jars/libs/zstd-jni-1.5.7-4-linux_amd64.jar "{$PREFIX}/share/app/libs/"
+cp metadata/scripts/run_pipeline_module2to6.sh "{$PREFIX}/share/app/"
+cp metadata/scripts/reads_preprocessing.sh "{$PREFIX}/share/app/"
+cp metadata/config/log4j2.xml "{$PREFIX}/share/app/config/"
