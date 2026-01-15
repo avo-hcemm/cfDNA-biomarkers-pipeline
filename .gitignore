@@ -5,6 +5,7 @@
 *.r
 *.html
 *.json
+*tar.gz
 
 #local docs
 galaxy_tools/galaxy_setup.docx
