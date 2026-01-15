@@ -34,8 +34,21 @@ requirements:
 
 test:
   commands:
-    - preprocessing.sh    # need to complete
-    - run_pipeline_module2to6.sh  # need to complete
+    - bash ./share/app/reads_preprocessing.sh \
+        cfDNA-biomarkers-pipeline/metadata/data/sample_data \
+        test \
+        ./cfDNA-biomarkers-pipeline/metadata/data/others/NexteraXT-Trans-Prefix.fa \
+        ./share/app/genome/index \
+        -o output_dir
+    - java -Xms_min_heap -Xmx_max_heap \
+        -Dlog4j.configurationFile=./share/app/config/log4j2.xml \
+        -cp ./share/app/jars/jcna-biomrkrs-final_11.jar \
+        task.test.Jcna_input \
+        input/species/genomeinfo-file-name.csv \
+        input/species/paramsinfo-file-name.csv \
+        species \
+        --chromosome chrN
+
 
 about:
   home: {{ repo_url }}
