@@ -1,3 +1,4 @@
+mkdir -p "{$PREFIX}/share/app/{jars,libs,config}"
 cp metadata/jars/jcna-biomrkrs-final_11.jar "{$PREFIX}/share/app/jars/"
 cp metadata/jars/libs/all-libraries.jar "{$PREFIX}/share/app/libs/"
 cp metadata/jars/libs/zstd-jni-1.5.7-4-linux_amd64.jar "{$PREFIX}/share/app/libs/"
