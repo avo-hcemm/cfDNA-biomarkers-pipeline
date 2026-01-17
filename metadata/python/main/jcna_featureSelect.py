@@ -20,12 +20,8 @@ import mylogging
 import pandas as pd
 
 # Module for important features selection
-import statistically_significant_features
 import features_selection
 
-# argv[1]: input file 
-# argv[2]: output file 
-# argv[3]: minimum features size
 # %%%%%%%%%%%%%
 name = "Main"
 # %%%%%%%%%%%%%
@@ -91,7 +87,6 @@ original_columns = df.columns.astype(str)
 name_map = dict(zip(original_columns.str.replace("-", "_"), original_columns))
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# statistically_significant_features.calc_stat_sign_feat(df,sys.argv[2],int(sys.argv[3]),name_map,logger_functions, logger_write,logger_stats)
 features_selection.calc_stat_sign_feat(df,sys.argv[2],int(sys.argv[3]),name_map,logger_functions, logger_write,logger_stats)
 
 
