@@ -30,23 +30,31 @@ requirements:
     - trimmomatic
     - bowtie2
     - samtools
-    - multiqc
+    - multiqc 
+    - numpy
+    - pandas
+    - sklearn-compat
+    - imbalanced-learn
+    - shap
+    - xgboost
+    - scikit-bio
+    - scipy
 
 test:
   commands:
-    - bash "$PREFIX"/share/cfcna-biomarkersearch/scripts/reads_preprocessing.sh \
-      -o "$PREFIX"/share/cfcna-biomarkersearch \
+    - bash "$PREFIX"/share/cfdna-biomarkersearch/scripts/reads_preprocessing.sh \
+      -o "$PREFIX"/share/cfdna-biomarkersearch \
       raw_data \
       test \
       config/adapterfile.fa \
       genome/index
     
-    - bash "$PREFIX"/share/cfcna-biomarkersearch/scripts/run_pipeline_module2to6.sh \
-        -o "$PREFIX"/share/cfcna-biomarkersearch \
-        input/human/genome.csv \
-        input/human/params.csv \
-        human \
-        --chromosome chr22
+    - bash "$PREFIX"/share/cfdna-biomarkersearch/scripts/run_pipeline_module2to6.sh \
+       -o "$PREFIX"/share/cfdna-biomarkersearch \
+       input/human/genome.csv \
+       input/human/params.csv \
+       human \
+       --chromosome chr22
 
 about:
   home: {{ repo_url }}
