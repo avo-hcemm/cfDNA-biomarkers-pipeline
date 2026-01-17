@@ -8,8 +8,8 @@ cp metadata/jars/libs/zstd-jni-1.5.7-4-linux_amd64.jar "{$PREFIX}/share/app/libs
 cp metadata/scripts/run_pipeline_module2to6.sh "{$PREFIX}/share/app/"
 cp metadata/scripts/reads_preprocessing.sh "{$PREFIX}/share/app/"
 cp metadata/config/log4j2.xml "{$PREFIX}/share/app/config/"
-cp metadata/data/others/genome-test.csv "{$PREFIX}/input/human"
-cp metadata/data/others/params-test.csv "{$PREFIX}/input/human"
+cp metadata/data/others/genome-test.csv "{$PREFIX}/output_dir/input/human"
+cp metadata/data/others/params-test.csv "{$PREFIX}/output_dir/input/human"
 wget -P "{$PREFIX}/share/app/" https://hgdownload.soe.ucsc.edu/goldenPath/hg38/chromosomes/chr22.fa.gz
 gunzip "{$PREFIX}/share/app/chr22.fa.gz"
 bowtie2-build "{$PREFIX}/share/app/chr22.fa" "{$PREFIX}/share/app/genome/index"

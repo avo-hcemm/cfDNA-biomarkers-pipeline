@@ -39,16 +39,13 @@ test:
         test \
         ./cfDNA-biomarkers-pipeline/metadata/data/others/NexteraXT-Trans-Prefix.fa \
         ./share/app/genome/index \
-        -o output_dir
-    - java -Xms_min_heap -Xmx_max_heap \
-        -Dlog4j.configurationFile=./share/app/config/log4j2.xml \
-        -cp ./share/app/jars/jcna-biomrkrs-final_11.jar \
-        task.test.Jcna_input \
-        input/species/genomeinfo-file-name.csv \
-        input/species/paramsinfo-file-name.csv \
-        species \
-        --chromosome chrN
-
+        -o ./output_dir
+    - bash "$PREFIX"/share/app/run_pipeline_module2to6.sh \ 
+        -o "$PREFIX" \
+        ./output_dir/input/species/genomeinfo-file-name.csv \
+        ./output_dir/input/species/paramsinfo-file-name.csv \
+        human \
+        --chromosome chr22
 
 about:
   home: {{ repo_url }}
