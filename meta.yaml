@@ -34,17 +34,17 @@ requirements:
 
 test:
   commands:
-    - bash ./share/app/reads_preprocessing.sh \
-      -o output_dir/samples \
-      ./cfDNA-biomarkers-pipeline/metadata/data/sample_data \
+    - bash "$PREFIX"/share/cfcna-biomarkersearch/scripts/reads_preprocessing.sh \
+      -o "$PREFIX"/share/cfcna-biomarkersearch \
+      raw_data \
       test \
-      ./cfDNA-biomarkers-pipeline/metadata/data/others/NexteraXT-Trans-Prefix.fa \
-      ./share/app/genome/index
+      config/adapterfile.fa \
+      genome/index
     
-    - bash "$PREFIX"/share/app/run_pipeline_module2to6.sh \
-        -o "$PREFIX"/output_dir \
-        ./input/human/genomeinfo-file-name.csv \
-        ./input/human/paramsinfo-file-name.csv \
+    - bash "$PREFIX"/share/cfcna-biomarkersearch/scripts/run_pipeline_module2to6.sh \
+        -o "$PREFIX"/share/cfcna-biomarkersearch \
+        input/human/genome.csv \
+        input/human/params.csv \
         human \
         --chromosome chr22
 

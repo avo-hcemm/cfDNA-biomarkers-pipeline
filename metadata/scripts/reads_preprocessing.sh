@@ -34,13 +34,17 @@ trim() {
     echo -n "$var"
 }
 
-OUTPUTDIR="$(trim "$2")"
+BASE_DIR="$(trim "$2")"
 PATHTODATA="$(trim "$3")"
 DATA_SUBDIR="$(trim "$4")"
 ADAPTERFILE="$(trim "$5")"
 GENOMEINDEX="$(trim "$6")"
+OUTPUTDIR="${BASE_DIR}/samples"
+ADAPTERFILE="${BASE_DIR}/${ADAPTERFILE}"
+GENOMEINDEX="${BASE_DIR}/${GENOMEINDEX}"
 
 echo "Input Parameters after assignment:"
+echo "BASE_DIR=$BASE_DIR"
 echo "OUTPUTDIR=$OUTPUTDIR"
 echo "PATHTODATA=$PATHTODATA"
 echo "DATA_SUBDIR=$DATA_SUBDIR"
