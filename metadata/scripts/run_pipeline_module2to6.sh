@@ -90,9 +90,9 @@ HEAP_MEM_GB=$(( TOTAL_MEM_MB * 9 / 10240 ))  # 9/10 of total memory in GB
 
 # Auxiliary parameters to run the jar file
 # Define CLASSPATH if not already set in the environment
-CLASSPATH=${CLASSPATH:-./share/app/jars/jcna-biomrkrs-final_11.jar:./share/app/libs/zstd-jni-1.5.7-4-linux_amd64.jar}
+CLASSPATH=${CLASSPATH:-./jars/mod2to6.jar:./libs/zstd-linux_amd64.jar}
 HEAP_SIZE=${HEAP_MEM_GB:-32}G
-LOGFILE_PATH=${LOGFILE_PATH:-./share/app/config/log4j2.xml}
+LOGFILE_PATH=${LOGFILE_PATH:-./config/log4j2.xml}
 echo "Java command: java -Xmx$HEAP_SIZE -Dlog4j.configurationFile=$LOGFILE_PATH -cp "$CLASSPATH" task.test.Jcna_input ..."
 
 # Run Java analysis with or without chromosome and DATAINFO

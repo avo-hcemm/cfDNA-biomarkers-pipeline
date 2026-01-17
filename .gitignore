@@ -16,3 +16,4 @@ python/
 tests/
 galaxy/old/
 __pycache__/
+tmp/
