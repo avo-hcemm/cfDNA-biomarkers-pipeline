@@ -14,8 +14,6 @@ source:
 build:
   noarch: generic
   number: 0
-  run_exports:
-    - {{ pin_subpackage("cfDNA-BiomarkerSearch", max_pin="x.x") }}
 
 requirements:
   run:
@@ -25,7 +23,7 @@ requirements:
     - tar
     - curl
     - gnupg
-    - openjdk>=21
+    - openjdk >=21
     - fastqc
     - trimmomatic
     - bowtie2
@@ -61,7 +59,7 @@ about:
   license: MIT
   license_family: MIT
   license_file: license/MIT_License
-  summary: Pipeline to identify candidate cfDNA biomarker sequences from WGS data, performing preprocessing, alignment, and custom analysis that searches informative genomic regions with potential as biomarkers
+  summary: Pipeline to identify candidate cfDNA biomarker sequences from WGS data
   description: |
     cfDNA-BiomarkerDiscovery is a pipeline designed to identify candidate biomarker sequences from cell-free DNA (cfDNA) derived from blood samples. The pipeline takes as input:
     •	An archive of FASTQ files containing paired-end reads from whole-genome sequencing (WGS) of one or more case cohorts and a control cohort.
