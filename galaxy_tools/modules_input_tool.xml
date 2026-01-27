@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tool id="modules_input_validation" name="Modules Input" version="1.7.1">
+<tool id="modules_input_validation" name="Modules Input" version="1.7.2">
     <description>User input validation</description>
 
     <requirements>
-        <!-- Container -->
-        <container type="docker">avohcemm/biomarkersearch-galaxy-wf:0812</container>
+        <requirement type="package" version="0.1.1">cfdna-biomarkersearch</requirement>
+        
+        <container type="docker">quay.io/biocontainers/cfdna-biomarkersearch:0.1.1--py311h12345_0</container>
+
+        <resource type="ram_min">64000</resource>
+        <resource type="cpu_cores_min">50</resource>
     </requirements>
 
     <command detect_errors="exit_code"><![CDATA[

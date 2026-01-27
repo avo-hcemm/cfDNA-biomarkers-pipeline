@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tool id="module2to6" name="Modules 2–6" version="2.2.2">
+<tool id="module2to6" name="Modules 2–6" version="2.2.3">
   <description>Biomarker discovery per chromosome (pipeline modules 2–6) </description>
 
-   <requirements>
-    <container type="docker" >avohcemm/biomarkersearch-galaxy-wf:0812</container>
-     <resource type="ram_min">64000</resource>   <!-- RAM in MB -->
-      <resource type="cores_min">50</resource>    <!-- number of CPU cores -->
+  <requirements>
+    <requirement type="package" version="0.1.1">cfdna-biomarkersearch</requirement>
+    
+    <container type="docker">quay.io/biocontainers/cfdna-biomarkersearch:0.1.1--py311h12345_0</container>
+
+    <resource type="ram_min">64000</resource>
+    <resource type="cpu_cores_min">50</resource>
   </requirements>
 
   <command detect_errors="exit_code"><![CDATA[
