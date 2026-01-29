@@ -16,3 +16,5 @@ tests/
 galaxy/old/
 __pycache__/
 tmp/
+dockerfiles/old/
+bioconda-recipes/

@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tool id="module1" name="Module 1" version="2.8.2">
+<tool id="module1" name="Module 1" version="2.8.3">
     <description>Data preprocessing (pipeline module 1)</description>
 
     <requirements>
-        <!-- Container -->
-        <container type="docker" >avohcemm/biomarkersearch-galaxy-wf:0812</container>
-         <resource type="ram_min">64000</resource>   <!-- RAM in MB -->
-        <resource type="cores_min">50</resource>    <!-- number of CPU cores -->
+        <requirement type="package" version="0.1.1">cfdna-biomarkersearch</requirement>
+        
+        <container type="docker">quay.io/biocontainers/cfdna-biomarkersearch:0.1.1--py311h12345_0</container>
+
+        <resource type="ram_min">64000</resource>
+        <resource type="cpu_cores_min">50</resource>
     </requirements>
 
     <command detect_errors="exit_code"><![CDATA[
