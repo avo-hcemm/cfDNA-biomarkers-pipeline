@@ -16,7 +16,4 @@ cp metadata/config/log4j2.xml "$BASE_DIR/config/"
 cp metadata/data/others/NexteraXT-Trans-Prefix.fa "$BASE_DIR/config/adapterfile.fa"
 cp metadata/data/others/genome-test.csv "$BASE_DIR/input/human/genome.csv"
 cp metadata/data/others/params-test.csv "$BASE_DIR/input/human/params.csv"
-curl -o "$BASE_DIR/genome/chr22.fa.gz" https://hgdownload.soe.ucsc.edu/goldenPath/hg38/chromosomes/chr22.fa.gz
-gunzip "$BASE_DIR/genome/chr22.fa.gz"
-bowtie2-build "$BASE_DIR/genome/chr22.fa" "$BASE_DIR/genome/index"
 cp -r metadata/python/* "$BASE_DIR/python"
