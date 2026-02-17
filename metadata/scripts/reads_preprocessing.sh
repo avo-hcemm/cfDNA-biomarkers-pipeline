@@ -177,7 +177,7 @@ for subdir in "${PATHTODATA%/}"/*/; do
     fi
     fastqc -t "$THREADS" --noextract -f bam -o "$mapped_fastqc_dir" "$FINAL_BAM"|| { echo "fastqc on bam files failed"; exit 1; } 
 
-    # sampels moved to target folder for Java analysis
+    # samples moved to the $OUTPUTDIR folder for Java analysis
     echo "creating the folder $OUTPUTDIR/${SPECIES}/${subfolder_name}/ if it does not exists"
     mkdir -p "$OUTPUTDIR/${SPECIES}/${subfolder_name}/"
     if [ -f "$mapped_dir/${base}_sort_ndp.bam" ]; then
