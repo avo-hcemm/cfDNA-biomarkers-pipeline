@@ -17,11 +17,12 @@ PATHTODATA=""
 DATA_SUBDIR=""
 ADAPTERFILE=""
 GENOMEINDEX=""
+SPECIES=""
 THREADS=${GALAXY_SLOTS:-10}
 	
 
 if [ $# -ne 6 ]; then
-  echo "Usage: $0 -o <outputDir> <pathToData> <dataSubdir> <adapterFile> <genomeIndex>"
+  echo "Usage: $0 -o <outputDir> <pathToData> <dataSubdir> <adapterFile> <genomeIndex> <species>"
   exit 1
 fi
 
@@ -39,6 +40,7 @@ PATHTODATA="$(trim "$3")"
 DATA_SUBDIR="$(trim "$4")"
 ADAPTERFILE="$(trim "$5")"
 GENOMEINDEX="$(trim "$6")"
+SPECIES="$(trim "$7")"
 PATHTODATA="${BASE_DIR}/${PATHTODATA#/}"
 OUTPUTDIR="${BASE_DIR}/samples"
 ADAPTERFILE="${BASE_DIR}/${ADAPTERFILE}"
@@ -51,6 +53,7 @@ echo "PATHTODATA=$PATHTODATA"
 echo "DATA_SUBDIR=$DATA_SUBDIR"
 echo "ADAPTERFILE=$ADAPTERFILE"
 echo "GENOMEINDEX=$GENOMEINDEX"
+echo "SPECIES=$SPECIES"
 
 if [[ -z "$OUTPUTDIR" ]]; then
     echo "Error: -o OUTPUTDIR must be specified"
@@ -175,14 +178,14 @@ for subdir in "${PATHTODATA%/}"/*/; do
     fastqc -t "$THREADS" --noextract -f bam -o "$mapped_fastqc_dir" "$FINAL_BAM"|| { echo "fastqc on bam files failed"; exit 1; } 
 
     # sampels moved to target folder for Java analysis
-    echo "creating the folder $OUTPUTDIR/human/${subfolder_name}/ if it does not exists"
-    mkdir -p "$OUTPUTDIR/human/${subfolder_name}/"
+    echo "creating the folder $OUTPUTDIR/${SPECIES}/${subfolder_name}/ if it does not exists"
+    mkdir -p "$OUTPUTDIR/${SPECIES}/${subfolder_name}/"
     if [ -f "$mapped_dir/${base}_sort_ndp.bam" ]; then
-      cp "$mapped_dir/${base}_sort_ndp.bam" "$OUTPUTDIR/human/${subfolder_name}/${base}_sort_ndp.bam"
-      echo "${base}_sort_ndp.bam copied to folder $OUTPUTDIR/human/${subfolder_name}/${base}_sort_ndp.bam."
+      cp "$mapped_dir/${base}_sort_ndp.bam" "$OUTPUTDIR/${SPECIES}/${subfolder_name}/${base}_sort_ndp.bam"
+      echo "${base}_sort_ndp.bam copied to folder $OUTPUTDIR/${SPECIES}/${subfolder_name}/${base}_sort_ndp.bam."
     else
-      cp "$mapped_dir/${base}_sort.bam" "$OUTPUTDIR/human/${subfolder_name}/${base}_sort.bam"
-      echo "${base}_sort.bam copied to folder $OUTPUTDIR/human/${subfolder_name}/${base}_sort.bam."
+      cp "$mapped_dir/${base}_sort.bam" "$OUTPUTDIR/${SPECIES}/${subfolder_name}/${base}_sort.bam"
+      echo "${base}_sort.bam copied to folder $OUTPUTDIR/${SPECIES}/${subfolder_name}/${base}_sort.bam."
     fi
 
 
